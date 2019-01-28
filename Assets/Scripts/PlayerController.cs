@@ -26,8 +26,18 @@ public class PlayerController : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
-	Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+	    Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 
-        rb.AddForce(movement * speed);
+        rb.AddForce (movement * speed);
+    }
+
+    // Chamado quando ocorre uma colisão no objeto que esse script é atribuído
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Pick Up"))
+        {
+            other.gameObject.SetActive (false);
+        }
+        //Destroy(other.gameObject);
     }
 }

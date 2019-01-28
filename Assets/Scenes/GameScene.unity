@@ -382,7 +382,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!135 &557190895
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1382,7 +1382,7 @@ GameObject:
   - component: {fileID: 1804139880}
   m_Layer: 0
   m_Name: Pick Ups
-  m_TagString: Untagged
+  m_TagString: Pick Up
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1594,6 +1594,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 3986705071683785042, guid: 2b6307a8603ccc44cad8022b513ffc4e,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2b6307a8603ccc44cad8022b513ffc4e, type: 3}
