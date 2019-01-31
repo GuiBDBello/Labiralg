@@ -4,17 +4,29 @@ using UnityEngine;
 
 public class Maze : MonoBehaviour
 {
+    [System.Serializable]
+    public class Cell
+    {
+        public bool visited;
+        public GameObject north;
+        public GameObject south;
+        public GameObject east;
+        public GameObject west;
+    }
+
     public GameObject wall;
     public float wallLength;
     // Colunas
     public int xSize;
-    // Altura
+    // TODO: Altura
     public int ySize;
     // Linhas
     public int zSize;
 
     private Vector3 initialPosition;
     private GameObject wallHolder;
+    // TODO: Tornar variável cells pública
+    public Cell[] cells;
 
     // Start is called before the first frame update
     void Start()
@@ -63,6 +75,49 @@ public class Maze : MonoBehaviour
                 tempWall = Instantiate(wall, myPosition, Quaternion.Euler(0.0f, 90.0f, 0.0f)) as GameObject;
                 tempWall.transform.parent = wallHolder.transform;
             }
+        }
+        // Após terminar a criação dos muros, cria-se as células
+        CreateCells();
+    }
+
+    void CreateCells ()
+    {
+        int children = wallHolder.transform.childCount;
+        GameObject[] allWalls = new GameObject[children];
+        cells = new Cell[xSize * zSize];
+        int westEastProcess = 0;
+        int childProcess = 0;
+        int termCount = 0;
+
+        // Retorna todos os filhos
+        for (int i = 0; i < children; i++)
+        {
+            allWalls[i] = wallHolder.transform.GetChild(i).gameObject;
+        }
+
+        // Vincula paredes às células
+        for (int cellprocess = 0; cellprocess < cells.Length; cellprocess++)
+        {
+            cells[cellprocess] = new Cell();
+            cells[cellprocess].west = allWalls[westEastProcess];
+            cells[cellprocess].south = allWalls[childProcess + ((xSize + 1) * zSize)];
+
+            // Verifica se é a última célula da linha
+            if (termCount == xSize)
+            {
+                // Pula uma célula e zera a "coluna"
+                westEastProcess += 2;
+                termCount = 0;
+            } else
+            {
+                westEastProcess++;
+            }
+            termCount++;
+            childProcess++;
+
+
+            cells[cellprocess].east = allWalls[westEastProcess];
+            cells[cellprocess].north = allWalls[(childProcess + ((xSize + 1) * zSize)) + xSize - 1];
         }
     }
 }

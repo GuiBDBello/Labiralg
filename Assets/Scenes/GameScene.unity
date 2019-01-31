@@ -1278,6 +1278,7 @@ MonoBehaviour:
   xSize: 5
   ySize: 5
   zSize: 5
+  cells: []
 --- !u!4 &1202074086
 Transform:
   m_ObjectHideFlags: 0
