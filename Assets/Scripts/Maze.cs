@@ -25,8 +25,12 @@ public class Maze : MonoBehaviour
 
     private Vector3 initialPosition;
     private GameObject wallHolder;
-    // TODO: Tornar variável cells pública
+    // TODO: Tornar variável cells privada
     public Cell[] cells;
+    // TODO: Tornar variável currentCell privada
+    public int currentCell = 0;
+    // TODO: Verificar a necessidade da variável totalCells (igual à cells)
+    private int totalCells = 0;
 
     // Start is called before the first frame update
     void Start()
@@ -118,6 +122,73 @@ public class Maze : MonoBehaviour
 
             cells[cellprocess].east = allWalls[westEastProcess];
             cells[cellprocess].north = allWalls[(childProcess + ((xSize + 1) * zSize)) + xSize - 1];
+        }
+
+        CreateMaze();
+    }
+
+    void CreateMaze()
+    {
+        GiveMeNeighbour();
+    }
+
+    void GiveMeNeighbour()
+    {
+        totalCells = xSize * zSize;
+        int length = 0;
+        int[] neighbours = new int[4];
+        int check = 0;
+
+        // Verifica se está na última célula da linha
+        // TODO: Refatorar para método
+        check = (currentCell + 1) / xSize;
+        check -= 1;
+        check *= xSize;
+        check += xSize;
+
+        // TODO: Refatorar para método
+        // Sul
+        if (currentCell - xSize >= 0)
+        {
+            if (cells[currentCell - xSize].visited == false)
+            {
+                neighbours[length] = currentCell - xSize;
+                length++;
+            }
+        }
+        // Oeste
+        if (currentCell - 1 >= 0 && currentCell != check)
+        {
+            if (cells[currentCell - 1].visited == false)
+            {
+                neighbours[length] = currentCell - 1;
+                length++;
+            }
+        }
+        // Leste
+        if (currentCell + 1 < totalCells && (currentCell + 1 ) != check)
+        {
+            if (cells[currentCell + 1].visited == false)
+            {
+                neighbours[length] = currentCell + 1;
+                length++;
+            } 
+        }
+        // Norte
+        if (currentCell + xSize < totalCells)
+        {
+            if (cells[currentCell + xSize].visited == false)
+            {
+                neighbours[length] = currentCell + xSize;
+                length++;
+            }
+        }
+
+        
+
+        for (int i = 0; i < length; i++)
+        {
+            Debug.Log(neighbours[i]);
         }
     }
 }
