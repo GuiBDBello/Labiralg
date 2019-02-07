@@ -1274,12 +1274,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wall: {fileID: 5149487424246928484, guid: f063601674fd6be4495f4373b13deafe, type: 3}
-  wallLength: 1
+  wallLength: 3
   xSize: 5
   ySize: 5
   zSize: 5
-  cells: []
-  currentCell: 0
 --- !u!4 &1202074086
 Transform:
   m_ObjectHideFlags: 0
