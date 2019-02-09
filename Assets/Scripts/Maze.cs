@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Maze : MonoBehaviour
-{
+public class Maze : MonoBehaviour {
     [System.Serializable]
-    public class Cell
-    {
+    public class Cell {
         public bool visited;
         public GameObject north;
         public GameObject south;
@@ -18,44 +16,44 @@ public class Maze : MonoBehaviour
     public float wallLength;
     // Colunas
     public int xSize;
-    // TODO: Altura
+    // Altura
     public int ySize;
     // Linhas
     public int zSize;
 
-    private Vector3 initialPosition;
-    private GameObject wallHolder;
-    private Cell[] cells;
-    private int currentCell = 0;
+    private GameObject WallHolder { get; set; }
+    private Vector3 InitialPosition { get; set; }
+    private Cell[] Cells { get; set; }
+    private List<int> LastCells { get; set; }
+    private int VisitedCells { get; set; }
+    private int TotalCells { get; set; } = 0;
+    private int CurrentCell { get; set; } = 0;
     // TODO: Verificar a necessidade da variável totalCells (igual à cells)
-    private int totalCells = 0;
-    private int visitedCells;
-    private bool startedBuilding = false;
-    private int currentNeighbour = 0;
-    private List<int> lastCells;
-    private int backingUp = 0;
-    private int wallToBreak = 0;
+    private int CurrentNeighbour { get; set; } = 0;
+    private int WallToBreak { get; set; } = 0;
+    private int BackingUp { get; set; } = 0;
+    private bool StartedBuilding { get; set; } = false;
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         //wall.transform.localScale += new Vector3(0, 0, wallLength - wall.transform.localScale.z);
-        CreateWalls();
+        this.CreateWalls();
+
+        // Após terminar a criação dos muros, cria-se as células
+        this.CreateCells();
+
+        this.CreateMaze();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    void Update() { }
 
-    void CreateWalls()
-    {
-        wallHolder = new GameObject();
-        wallHolder.name = "Maze";
+    void CreateWalls() {
+        this.WallHolder = new GameObject();
+        this.WallHolder.name = "Maze";
         // Posição do canto esquerdo inferior da tela
-        initialPosition = new Vector3((-xSize / 2) + (wallLength / 2), 0.0f, (-zSize / 2) + (wallLength / 2));
-        Vector3 myPosition = initialPosition;
+        this.InitialPosition = new Vector3((-xSize / 2) + (wallLength / 2), 0.0f, (-zSize / 2) + (wallLength / 2));
+        Vector3 myPosition = this.InitialPosition;
         // TODO: Remover variável temporária, má prática
         GameObject tempWall;
 
@@ -65,10 +63,10 @@ public class Maze : MonoBehaviour
             // Maior ou igual (<=) é necessário pois retorna uma parede a mais, a última coluna
             for (int j = 0; j <= xSize; j++)
             {
-                myPosition = new Vector3(initialPosition.x + (j * wallLength) - (wallLength / 2), 0.0f,
-                    initialPosition.z + (i * wallLength) - (wallLength / 2));
+                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), 0.0f,
+                    this.InitialPosition.z + (i * wallLength) - (wallLength / 2));
                 tempWall = Instantiate(wall, myPosition, Quaternion.identity) as GameObject;
-                tempWall.transform.parent = wallHolder.transform;
+                tempWall.transform.parent = this.WallHolder.transform;
             }
         }
 
@@ -78,24 +76,21 @@ public class Maze : MonoBehaviour
         {
             for (int j = 0; j < xSize; j++)
             {
-                myPosition = new Vector3(initialPosition.x + (j * wallLength), 0.0f,
-                    initialPosition.z + (i * wallLength) - wallLength);
+                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength), 0.0f,
+                    this.InitialPosition.z + (i * wallLength) - wallLength);
                 tempWall = Instantiate(wall, myPosition, Quaternion.Euler(0.0f, 90.0f, 0.0f)) as GameObject;
-                tempWall.transform.parent = wallHolder.transform;
+                tempWall.transform.parent = this.WallHolder.transform;
             }
         }
-        // Após terminar a criação dos muros, cria-se as células
-        CreateCells();
     }
 
-    void CreateCells ()
-    {
-        lastCells = new List<int>();
-        lastCells.Clear();
-        totalCells = xSize * zSize;
-        int children = wallHolder.transform.childCount;
+    void CreateCells () {
+        this.LastCells = new List<int>();
+        this.LastCells.Clear();
+        this.TotalCells = xSize * zSize;
+        int children = this.WallHolder.transform.childCount;
         GameObject[] allWalls = new GameObject[children];
-        cells = new Cell[xSize * zSize];
+        this.Cells = new Cell[xSize * zSize];
         int westEastProcess = 0;
         int childProcess = 0;
         int termCount = 0;
@@ -103,11 +98,11 @@ public class Maze : MonoBehaviour
         // Retorna todos os filhos
         for (int i = 0; i < children; i++)
         {
-            allWalls[i] = wallHolder.transform.GetChild(i).gameObject;
+            allWalls[i] = this.WallHolder.transform.GetChild(i).gameObject;
         }
 
         // Vincula paredes às células
-        for (int cellprocess = 0; cellprocess < cells.Length; cellprocess++)
+        for (int cellprocess = 0; cellprocess < this.Cells.Length; cellprocess++)
         {
             // Verifica se é a última célula da linha
             if (termCount == xSize)
@@ -117,51 +112,46 @@ public class Maze : MonoBehaviour
                 termCount = 0;
             }
 
-            cells[cellprocess] = new Cell();
-            cells[cellprocess].west = allWalls[westEastProcess];
-            cells[cellprocess].south = allWalls[childProcess + ((xSize + 1) * zSize)];
+            this.Cells[cellprocess] = new Cell();
+            this.Cells[cellprocess].west = allWalls[westEastProcess];
+            this.Cells[cellprocess].south = allWalls[childProcess + ((xSize + 1) * zSize)];
 
             westEastProcess++;
             termCount++;
             childProcess++;
 
 
-            cells[cellprocess].east = allWalls[westEastProcess];
-            cells[cellprocess].north = allWalls[(childProcess + ((xSize + 1) * zSize)) + xSize - 1];
+            this.Cells[cellprocess].east = allWalls[westEastProcess];
+            this.Cells[cellprocess].north = allWalls[(childProcess + ((xSize + 1) * zSize)) + xSize - 1];
         }
-
-        CreateMaze();
     }
 
-    void CreateMaze()
-    {
+    void CreateMaze() {
         //if (visitedCells < totalCells)
-        while (visitedCells < totalCells)
-        {
-            if (startedBuilding)
-            {
-                GiveMeNeighbour();
+        while (this.VisitedCells < this.TotalCells) {
+            if (this.StartedBuilding) {
+                this.GiveMeNeighbour();
                 // Se a célula vizinha não foi visitada, e a célula atual já foi, quebra o muro entre elas
-                if (cells[currentNeighbour].visited == false && cells[currentCell].visited == true)
+                if (this.Cells[this.CurrentNeighbour].visited == false && this.Cells[this.CurrentCell].visited == true)
                 {
-                    BreakWall();
-                    cells[currentNeighbour].visited = true;
-                    visitedCells++;
-                    lastCells.Add(currentCell);
-                    currentCell = currentNeighbour;
+                    this.BreakWall();
+                    this.Cells[this.CurrentNeighbour].visited = true;
+                    this.VisitedCells++;
+                    this.LastCells.Add(this.CurrentCell);
+                    this.CurrentCell = this.CurrentNeighbour;
                     // Restaura o valor de retorno se não encontra nenhum vizinho
-                    if (lastCells.Count > 0)
+                    if (this.LastCells.Count > 0)
                     {
-                        backingUp = lastCells.Count - 1;
+                        this.BackingUp = this.LastCells.Count - 1;
                     }
                 }
             } else
             {
                 // Escolhe uma célula aleatória para iniciar a construção do Labirinto
-                currentCell = Random.Range(0, totalCells);
-                cells[currentCell].visited = true;
-                visitedCells++;
-                startedBuilding = true;
+                this.CurrentCell = Random.Range(0, this.TotalCells);
+                this.Cells[this.CurrentCell].visited = true;
+                this.VisitedCells++;
+                this.StartedBuilding = true;
             }
 
             // Chamada recursiva
@@ -170,27 +160,7 @@ public class Maze : MonoBehaviour
         }
     }
 
-    void BreakWall()
-    {
-        switch (wallToBreak)
-        {
-            case 1:
-                Destroy(cells[currentCell].south);
-                break;
-            case 2:
-                Destroy(cells[currentCell].west);
-                break;
-            case 3:
-                Destroy(cells[currentCell].east);
-                break;
-            case 4:
-                Destroy(cells[currentCell].north);
-                break;
-        }
-    }
-
-    void GiveMeNeighbour()
-    {
+    void GiveMeNeighbour() {
         int length = 0;
         int[] neighbours = new int[4];
         int[] connectingWall = new int[4];
@@ -198,48 +168,48 @@ public class Maze : MonoBehaviour
 
         // Verifica se está na última célula da linha
         // TODO: Refatorar para método
-        check = (currentCell + 1) / xSize;
+        check = (this.CurrentCell + 1) / xSize;
         check -= 1;
         check *= xSize;
         check += xSize;
 
         // TODO: Refatorar para método
         // Sul
-        if (currentCell - xSize >= 0)
+        if (this.CurrentCell - xSize >= 0)
         {
-            if (cells[currentCell - xSize].visited == false)
+            if (this.Cells[this.CurrentCell - xSize].visited == false)
             {
-                neighbours[length] = currentCell - xSize;
+                neighbours[length] = this.CurrentCell - xSize;
                 connectingWall[length] = 1;
                 length++;
             }
         }
         // Oeste
-        if (currentCell - 1 >= 0 && currentCell != check)
+        if (this.CurrentCell - 1 >= 0 && this.CurrentCell != check)
         {
-            if (cells[currentCell - 1].visited == false)
+            if (this.Cells[this.CurrentCell - 1].visited == false)
             {
-                neighbours[length] = currentCell - 1;
+                neighbours[length] = this.CurrentCell - 1;
                 connectingWall[length] = 2;
                 length++;
             }
         }
         // Leste
-        if (currentCell + 1 < totalCells && (currentCell + 1 ) != check)
+        if (this.CurrentCell + 1 < this.TotalCells && (this.CurrentCell + 1 ) != check)
         {
-            if (cells[currentCell + 1].visited == false)
+            if (this.Cells[this.CurrentCell + 1].visited == false)
             {
-                neighbours[length] = currentCell + 1;
+                neighbours[length] = this.CurrentCell + 1;
                 connectingWall[length] = 3;
                 length++;
             } 
         }
         // Norte
-        if (currentCell + xSize < totalCells)
+        if (this.CurrentCell + xSize < this.TotalCells)
         {
-            if (cells[currentCell + xSize].visited == false)
+            if (this.Cells[this.CurrentCell + xSize].visited == false)
             {
-                neighbours[length] = currentCell + xSize;
+                neighbours[length] = this.CurrentCell + xSize;
                 connectingWall[length] = 4;
                 length++;
             }
@@ -253,19 +223,33 @@ public class Maze : MonoBehaviour
         */
 
         // Busca um vizinho aleatório
-        if (length != 0)
-        {
+        if (length != 0) {
             int theChosenOne = Random.Range(0, length);
-            currentNeighbour = neighbours[theChosenOne];
-            wallToBreak = connectingWall[theChosenOne];
-        } else
-        {
+            this.CurrentNeighbour = neighbours[theChosenOne];
+            this.WallToBreak = connectingWall[theChosenOne];
+        } else {
             // Ao encontrar um caminho sem-saída, faz o caminho inverso até encontrar uma saída
-            if (backingUp > 0)
-            {
-                currentCell = lastCells[backingUp];
-                backingUp--;
+            if (this.BackingUp > 0) {
+                this.CurrentCell = this.LastCells[this.BackingUp];
+                this.BackingUp--;
             }
+        }
+    }
+
+    void BreakWall() {
+        switch (this.WallToBreak) {
+            case 1:
+                Destroy(this.Cells[this.CurrentCell].south);
+                break;
+            case 2:
+                Destroy(this.Cells[this.CurrentCell].west);
+                break;
+            case 3:
+                Destroy(this.Cells[this.CurrentCell].east);
+                break;
+            case 4:
+                Destroy(this.Cells[this.CurrentCell].north);
+                break;
         }
     }
 }
