@@ -13,11 +13,12 @@ public class Maze : MonoBehaviour {
     }
 
     public GameObject wall;
-    public float wallLength;
+    public GameObject ground;
+    public float wallThickness; // X
+    public float wallHeight;    // Y
+    public float wallLength;    // Z
     // Colunas
     public int xSize;
-    // Altura
-    public int ySize;
     // Linhas
     public int zSize;
 
@@ -26,27 +27,43 @@ public class Maze : MonoBehaviour {
     private Cell[] Cells { get; set; }
     private List<int> LastCells { get; set; }
     private int VisitedCells { get; set; }
-    private int CurrentCell { get; set; } = 0;
-    // TODO: Verificar a necessidade da variável totalCells (igual à cells)
-    private int CurrentNeighbour { get; set; } = 0;
-    private int WallToBreak { get; set; } = 0;
-    private int BackingUp { get; set; } = 0;
-    private bool StartedBuilding { get; set; } = false;
+    private int CurrentCell { get; set; }
+    private int CurrentNeighbour { get; set; }
+    private int WallToBreak { get; set; }
+    private int BackingUp { get; set; }
+    private bool StartedBuilding { get; set; }
 
     // Start é chamado antes do primeiro frame
     void Start() {
-        wall.transform.localScale += new Vector3(0, 0, wallLength - wall.transform.localScale.z);
+        // Inicializa variáveis e propriedades
+        this.Init();
+
+        // Cria um grid com os muros
         this.CreateWalls();
 
         // Após terminar a criação dos muros, cria-se as células
         this.CreateCells();
 
         // Após criar os muros, gera o Labirinto
-        this.InstantlyCreateMaze();
+        //this.InstantlyCreateMaze();
+        this.SlowlyCreateMaze();
     }
 
     // Update é chamado uma vez por frame
     void Update() { }
+
+    void Init() {
+        // Tamanho do Muro
+        wall.transform.localScale = new Vector3(wallThickness, wallHeight, wallLength);
+        // Tamanho co chão
+        ground.transform.localScale = new Vector3((wallLength / 10) * xSize, 1.0f, (wallLength / 10) * zSize);
+
+        this.CurrentCell = 0;
+        this.CurrentNeighbour = 0;
+        this.WallToBreak = 0;
+        this.BackingUp = 0;
+        this.StartedBuilding = false;
+    }
 
     void CreateWalls() {
         this.WallHolder = new GameObject();
@@ -57,28 +74,31 @@ public class Maze : MonoBehaviour {
         Vector3 myPosition = this.InitialPosition;
         // TODO: Remover variável temporária, má prática
         GameObject tempWall;
+        GameObject tempGround;
 
         // Colunas
         for (int i = 0; i < zSize; i++) {
-            // Maior ou igual (<=) é necessário pois retorna uma parede a mais, a última coluna
+            // Maior ou igual (<=) é necessário pois retorna um muro a mais, a última coluna
             for (int j = 0; j <= xSize; j++) {
-                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), 0.0f,
-                    this.InitialPosition.z + (i * wallLength) - (wallLength / 2));
+                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), 0.0f, this.InitialPosition.z + (i * wallLength) - (wallLength / 2));
                 tempWall = Instantiate(wall, myPosition, Quaternion.identity) as GameObject;
                 tempWall.transform.parent = this.WallHolder.transform;
             }
         }
 
         // Linhas
-        // Maior ou igual (<=) é necessário pois retorna uma parede a mais, a última linha
+        // Maior ou igual (<=) é necessário pois retorna um muro a mais, a última linha
         for (int i = 0; i <= zSize; i++) {
             for (int j = 0; j < xSize; j++) {
-                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength), 0.0f,
-                    this.InitialPosition.z + (i * wallLength) - wallLength);
+                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength), 0.0f, this.InitialPosition.z + (i * wallLength) - wallLength);
                 tempWall = Instantiate(wall, myPosition, Quaternion.Euler(0.0f, 90.0f, 0.0f)) as GameObject;
                 tempWall.transform.parent = this.WallHolder.transform;
             }
         }
+        //ground.transform.localScale = new Vector3(xSize / 2, 1.0f, zSize / 2);
+        //ground.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        myPosition = new Vector3(this.InitialPosition.x + ((xSize * wallLength) / 2) - (wallLength / 2), 0.0f, this.InitialPosition.z + ((zSize * wallLength) / 2) - wallLength);
+        tempGround = Instantiate(ground, myPosition, Quaternion.Euler(0.0f, 0.0f, 0.0f)) as GameObject;
     }
 
     void CreateCells () {
@@ -98,7 +118,7 @@ public class Maze : MonoBehaviour {
             allWalls[i] = this.WallHolder.transform.GetChild(i).gameObject;
         }
 
-        // Vincula paredes às células
+        // Vincula muros às células
         for (int cellprocess = 0; cellprocess < this.Cells.Length; cellprocess++) {
             // Verifica se é a última célula da linha
             if (termCount == xSize) {
@@ -151,11 +171,11 @@ public class Maze : MonoBehaviour {
     }
 
     void SlowlyCreateMaze() {
-        float refreshTime = 0.0f;
+        float refreshTime = 0.1f;
         if (this.VisitedCells < this.Cells.Length) {
             this.CreateMaze();
             // Chamada recursiva
-            Invoke("CreateMaze", refreshTime);
+            Invoke("SlowlyCreateMaze", refreshTime);
         }
     }
 
