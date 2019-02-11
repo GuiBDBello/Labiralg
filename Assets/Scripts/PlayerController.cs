@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -22,9 +23,10 @@ public class PlayerController : MonoBehaviour
     }
 
     // Chamado antes de renderizar um frame
-    void Update ()
-    {
-        
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.R)) {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     // Chamado antes de realizar cálculos de física
@@ -36,6 +38,13 @@ public class PlayerController : MonoBehaviour
 	    Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 
         rb.AddForce (movement * speed);
+
+        if (Input.GetKey(KeyCode.LeftShift)) {
+            rb.AddForce(movement * speed * 10f);
+            rb.mass = 50f;
+        } else {
+            rb.mass = 1f;
+        }
     }
 
     // Chamado quando ocorre uma colisão no objeto que esse script é atribuído
