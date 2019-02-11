@@ -45,19 +45,14 @@ public class Maze : MonoBehaviour {
         this.CreateCells();
 
         // Após criar os muros, gera o Labirinto
-        //this.InstantlyCreateMaze();
-        this.SlowlyCreateMaze();
+        this.InstantlyCreateMaze();
+        //this.SlowlyCreateMaze();
     }
 
     // Update é chamado uma vez por frame
     void Update() { }
 
     void Init() {
-        // Tamanho do Muro
-        wall.transform.localScale = new Vector3(wallThickness, wallHeight, wallLength);
-        // Tamanho co chão
-        ground.transform.localScale = new Vector3((wallLength / 10) * xSize, 1.0f, (wallLength / 10) * zSize);
-
         this.CurrentCell = 0;
         this.CurrentNeighbour = 0;
         this.WallToBreak = 0;
@@ -70,7 +65,9 @@ public class Maze : MonoBehaviour {
         this.WallHolder.transform.position = new Vector3(0, 0, 0);
         this.WallHolder.name = "Maze";
         // Posição do canto esquerdo inferior da tela
-        this.InitialPosition = new Vector3((-xSize / 2) + (wallLength / 2), 0.0f, (-zSize / 2) + (wallLength / 2));
+        //this.InitialPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        // Posição centralizada
+        this.InitialPosition = new Vector3((-xSize * wallLength / 2) + (wallLength / 2), 0.0f, (-zSize * wallLength / 2) + (wallLength));
         Vector3 myPosition = this.InitialPosition;
         // TODO: Remover variável temporária, má prática
         GameObject tempWall;
@@ -80,9 +77,12 @@ public class Maze : MonoBehaviour {
         for (int i = 0; i < zSize; i++) {
             // Maior ou igual (<=) é necessário pois retorna um muro a mais, a última coluna
             for (int j = 0; j <= xSize; j++) {
-                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), 0.0f, this.InitialPosition.z + (i * wallLength) - (wallLength / 2));
+                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), wallHeight / 2, this.InitialPosition.z + (i * wallLength) - (wallLength / 2));
                 tempWall = Instantiate(wall, myPosition, Quaternion.identity) as GameObject;
                 tempWall.transform.parent = this.WallHolder.transform;
+
+                // Tamanho do muro
+                wall.transform.localScale = new Vector3(wallThickness, wallHeight, wallLength - wallThickness);
             }
         }
 
@@ -90,15 +90,23 @@ public class Maze : MonoBehaviour {
         // Maior ou igual (<=) é necessário pois retorna um muro a mais, a última linha
         for (int i = 0; i <= zSize; i++) {
             for (int j = 0; j < xSize; j++) {
-                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength), 0.0f, this.InitialPosition.z + (i * wallLength) - wallLength);
+                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength), wallHeight / 2, this.InitialPosition.z + (i * wallLength) - wallLength);
                 tempWall = Instantiate(wall, myPosition, Quaternion.Euler(0.0f, 90.0f, 0.0f)) as GameObject;
                 tempWall.transform.parent = this.WallHolder.transform;
+
+                // Tamanho do muro
+                wall.transform.localScale = new Vector3(wallThickness, wallHeight, wallLength - wallThickness);
             }
         }
         //ground.transform.localScale = new Vector3(xSize / 2, 1.0f, zSize / 2);
         //ground.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        
+        // Tamanho do chão
+        ground.transform.localScale = new Vector3(((wallLength / 10) * xSize) + (wallThickness / 10), 1.0f, ((wallLength / 10) * zSize) + (wallThickness / 10));
+
         myPosition = new Vector3(this.InitialPosition.x + ((xSize * wallLength) / 2) - (wallLength / 2), 0.0f, this.InitialPosition.z + ((zSize * wallLength) / 2) - wallLength);
         tempGround = Instantiate(ground, myPosition, Quaternion.Euler(0.0f, 0.0f, 0.0f)) as GameObject;
+        tempGround.transform.parent = this.WallHolder.transform;
     }
 
     void CreateCells () {
