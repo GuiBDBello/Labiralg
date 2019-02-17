@@ -21,6 +21,8 @@ public class Maze : MonoBehaviour {
     public int xSize;
     // Linhas
     public int zSize;
+    public bool generateInstantly;
+    public float generationSpeed;
 
     private GameObject WallHolder { get; set; }
     private Vector3 InitialPosition { get; set; }
@@ -43,16 +45,20 @@ public class Maze : MonoBehaviour {
 
         // Após terminar a criação dos muros, cria-se as células
         this.CreateCells();
-
+        
         // Após criar os muros, gera o Labirinto
-        this.InstantlyCreateMaze();
-        //this.SlowlyCreateMaze();
+        if (generateInstantly) {
+            this.InstantlyCreateMaze();
+        } else {
+            this.SlowlyCreateMaze();
+        }
     }
 
     // Update é chamado uma vez por frame
     void Update() { }
 
     void Init() {
+        this.VisitedCells = 0;
         this.CurrentCell = 0;
         this.CurrentNeighbour = 0;
         this.WallToBreak = 0;
@@ -179,12 +185,19 @@ public class Maze : MonoBehaviour {
     }
 
     void SlowlyCreateMaze() {
-        float refreshTime = 0.1f;
         if (this.VisitedCells < this.Cells.Length) {
             this.CreateMaze();
             // Chamada recursiva
-            Invoke("SlowlyCreateMaze", refreshTime);
+            Invoke("SlowlyCreateMaze", generationSpeed);
+        } else {
+            StartCoroutine(RecreateMaze());
         }
+    }
+
+    IEnumerator RecreateMaze() {
+        yield return new WaitForSeconds(3);
+        Destroy(WallHolder);
+        this.Start();
     }
 
     void GiveMeNeighbour() {
