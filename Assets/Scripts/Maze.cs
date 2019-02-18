@@ -13,6 +13,7 @@ public class Maze : MonoBehaviour {
     }
 
     public GameObject wall;
+    public GameObject column;
     public GameObject ground;
     public float wallThickness; // X
     public float wallHeight;    // Y
@@ -77,22 +78,22 @@ public class Maze : MonoBehaviour {
         Vector3 myPosition = this.InitialPosition;
         // TODO: Remover variável temporária, má prática
         GameObject tempWall;
+        GameObject tempColumn;
         GameObject tempGround;
 
-        // Colunas
+        // Colunas (muros)
         for (int i = 0; i < zSize; i++) {
             // Maior ou igual (<=) é necessário pois retorna um muro a mais, a última coluna
             for (int j = 0; j <= xSize; j++) {
                 myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), wallHeight / 2, this.InitialPosition.z + (i * wallLength) - (wallLength / 2));
                 tempWall = Instantiate(wall, myPosition, Quaternion.identity) as GameObject;
                 tempWall.transform.parent = this.WallHolder.transform;
-
                 // Tamanho do muro
                 wall.transform.localScale = new Vector3(wallThickness, wallHeight, wallLength - wallThickness);
             }
         }
 
-        // Linhas
+        // Linhas (muros)
         // Maior ou igual (<=) é necessário pois retorna um muro a mais, a última linha
         for (int i = 0; i <= zSize; i++) {
             for (int j = 0; j < xSize; j++) {
@@ -104,9 +105,20 @@ public class Maze : MonoBehaviour {
                 wall.transform.localScale = new Vector3(wallThickness, wallHeight, wallLength - wallThickness);
             }
         }
+
+        // Colunas
+        for (int i = 0; i <= zSize; i++) {
+            for (int j = 0; j <= xSize; j++) {
+                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), wallHeight / 2, this.InitialPosition.z + (i * wallLength) - (wallLength));
+                tempColumn = Instantiate(column, myPosition, Quaternion.identity) as GameObject;
+                tempColumn.transform.parent = this.WallHolder.transform;
+                // Tamanho das colunas
+                column.transform.localScale = new Vector3(wallThickness, wallHeight, wallThickness);
+            }
+        }
         //ground.transform.localScale = new Vector3(xSize / 2, 1.0f, zSize / 2);
         //ground.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
-        
+
         // Tamanho do chão
         ground.transform.localScale = new Vector3(((wallLength / 10) * xSize) + (wallThickness / 10), 1.0f, ((wallLength / 10) * zSize) + (wallThickness / 10));
 
