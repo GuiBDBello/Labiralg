@@ -12,20 +12,21 @@ public class Maze : MonoBehaviour {
         public GameObject west;
     }
 
+    public GameObject pickUp;
+    public float pickUpSpawnTime;
     public GameObject wall;
     public GameObject column;
     public GameObject ground;
     public float wallThickness; // X
     public float wallHeight;    // Y
     public float wallLength;    // Z
-    // Colunas
-    public int xSize;
-    // Linhas
-    public int zSize;
+    public int xSize;   // Colunas
+    public int zSize;   // Linhas
     public bool generateInstantly;
     public float generationSpeed;
 
     private GameObject WallHolder { get; set; }
+    private GameObject PickUpHolder { get; set; }
     private Vector3 InitialPosition { get; set; }
     private Cell[] Cells { get; set; }
     private List<int> LastCells { get; set; }
@@ -35,6 +36,7 @@ public class Maze : MonoBehaviour {
     private int WallToBreak { get; set; }
     private int BackingUp { get; set; }
     private bool StartedBuilding { get; set; }
+    private Coroutine SpawnPickUp { get; set; }
 
     // Start é chamado antes do primeiro frame
     void Start() {
@@ -53,24 +55,48 @@ public class Maze : MonoBehaviour {
         } else {
             this.SlowlyCreateMaze();
         }
+
+        if (this.SpawnPickUp != null) {
+            StopCoroutine(this.SpawnPickUp);
+        }
+        this.SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
     }
 
     // Update é chamado uma vez por frame
     void Update() { }
 
     void Init() {
+        Destroy(PickUpHolder);
+
         this.VisitedCells = 0;
         this.CurrentCell = 0;
         this.CurrentNeighbour = 0;
         this.WallToBreak = 0;
         this.BackingUp = 0;
         this.StartedBuilding = false;
+
+        // Labirinto
+        this.WallHolder = new GameObject();
+        this.WallHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        this.WallHolder.name = "Maze";
+
+        // Pick Ups
+        this.PickUpHolder = new GameObject();
+        this.PickUpHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        this.PickUpHolder.name = "Pick Ups";
+    }
+
+    public IEnumerator SpawnPickUpInGameArea(float waitTime) {
+        yield return new WaitForSeconds(waitTime);
+        GameObject tempPickUp;
+        Vector3 spawnArea = new Vector3(Random.Range((-xSize * wallLength) / 2, (xSize * wallLength) / 2), 1.0f, Random.Range((-zSize * wallLength) / 2, (zSize * wallLength) / 2));
+        tempPickUp = Instantiate(pickUp, spawnArea, Quaternion.identity) as GameObject;
+        tempPickUp.transform.parent = this.PickUpHolder.transform;
+        // Chamada recursiva...
+        this.SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
     }
 
     void CreateWalls() {
-        this.WallHolder = new GameObject();
-        this.WallHolder.transform.position = new Vector3(0, 0, 0);
-        this.WallHolder.name = "Maze";
         // Posição do canto esquerdo inferior da tela
         //this.InitialPosition = new Vector3(0.0f, 0.0f, 0.0f);
         // Posição centralizada
@@ -202,12 +228,12 @@ public class Maze : MonoBehaviour {
             // Chamada recursiva
             Invoke("SlowlyCreateMaze", generationSpeed);
         } else {
-            StartCoroutine(RecreateMaze());
+            StartCoroutine(RecreateMaze(3.0f));
         }
     }
 
-    IEnumerator RecreateMaze() {
-        yield return new WaitForSeconds(3);
+    IEnumerator RecreateMaze(float waitTime) {
+        yield return new WaitForSeconds(waitTime);
         Destroy(WallHolder);
         this.Start();
     }

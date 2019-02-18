@@ -411,6 +411,11 @@ PrefabInstance:
       propertyPath: generateInstantly
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2916989988120865823, guid: bcf9aaeaf1695ba468b1aee5448d33da,
+        type: 3}
+      propertyPath: pickUpSpawnTime
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcf9aaeaf1695ba468b1aee5448d33da, type: 3}
 --- !u!1 &468807162

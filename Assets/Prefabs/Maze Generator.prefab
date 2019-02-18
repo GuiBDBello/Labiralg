@@ -43,6 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a18a22ff1f1dc47928091bed6a15e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pickUp: {fileID: 4058620386329273061, guid: 2b6307a8603ccc44cad8022b513ffc4e, type: 3}
   wall: {fileID: 5149487424246928484, guid: f063601674fd6be4495f4373b13deafe, type: 3}
   column: {fileID: 3509802277058951075, guid: 101f81946dc350248ad7e10536c62b32, type: 3}
   ground: {fileID: 6046520257097762338, guid: da4f3722f8996d74e9d90e18bcb064ac, type: 3}
