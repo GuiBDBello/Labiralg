@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
-public class UISettings : MonoBehaviour {
+public class UISettingsMenu : MonoBehaviour {
 
     public GameObject panelMain;
     public GameObject panelSettings;

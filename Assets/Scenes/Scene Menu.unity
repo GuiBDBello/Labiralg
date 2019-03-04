@@ -592,8 +592,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f630a774a0a01e4ab6113bfa4adffb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
   panelMain: {fileID: 731055347}
   panelSettings: {fileID: 1026758134}
   audioMixer: {fileID: 24100000, guid: 9ddbae6a970c3ec49aca5d294ba9e44a, type: 2}
@@ -1622,7 +1620,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 3
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 0.88235295}
     m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
@@ -1644,7 +1642,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1664936035}
         m_MethodName: ButtonSettingsPressed
         m_Mode: 1
         m_Arguments:
@@ -3711,6 +3709,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1664936033}
   - component: {fileID: 1664936034}
+  - component: {fileID: 1664936035}
   m_Layer: 5
   m_Name: Main Menu
   m_TagString: Untagged
@@ -3753,6 +3752,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ac3cda5cd493448ab1fab28d9d44de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1664936035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1664936032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41a178f988362194493a2c115084224d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  panelMain: {fileID: 731055347}
+  panelSettings: {fileID: 1026758134}
 --- !u!1 &1724235012
 GameObject:
   m_ObjectHideFlags: 0
@@ -4101,7 +4114,7 @@ MonoBehaviour:
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 0.88235295}
     m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
-    m_PressedColor: {r: 0, g: 0, b: 0, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 0.49019608}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
