@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UISettings : MonoBehaviour {
+public class UIMainMenu : MonoBehaviour {
 
     public GameObject panelMain;
     public GameObject panelSettings;
@@ -18,12 +18,7 @@ public class UISettings : MonoBehaviour {
     }
 
     public void ButtonSettingsPressed() {
-        panelMain.GetComponent<RectTransform>().anchoredPosition = new Vector2(-500.0f, 500.0f);
+        panelMain.GetComponent<RectTransform>().anchoredPosition = new Vector2(-500.0f, 0.0f);
         panelSettings.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, 0.0f);
-    }
-
-    public void ButtonBackPressed() {
-        panelMain.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, 0.0f);
-        panelSettings.GetComponent<RectTransform>().anchoredPosition = new Vector2(500.0f, -500.0f);
     }
 }
