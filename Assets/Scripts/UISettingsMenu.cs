@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 
 public class UISettingsMenu : MonoBehaviour {
-
-    public GameObject panelMain;
-    public GameObject panelSettings;
+    
     public AudioMixer audioMixer;
     public Dropdown resolutionDropdown;
+    public Animator animator;
 
     Resolution[] resolutions;
 
@@ -59,7 +57,6 @@ public class UISettingsMenu : MonoBehaviour {
     }
 
     public void ButtonBackPressed() {
-        panelMain.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, 0.0f);
-        panelSettings.GetComponent<RectTransform>().anchoredPosition = new Vector2(500.0f, 0.0f);
+        animator.SetTrigger("Change Menu");
     }
 }

@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class UIMainMenu : MonoBehaviour {
 
-    public GameObject panelMain;
-    public GameObject panelSettings;
+    public Animator animator;
 
     // Start is called before the first frame update
     void Start() {
@@ -18,7 +15,6 @@ public class UIMainMenu : MonoBehaviour {
     }
 
     public void ButtonSettingsPressed() {
-        panelMain.GetComponent<RectTransform>().anchoredPosition = new Vector2(-500.0f, 0.0f);
-        panelSettings.GetComponent<RectTransform>().anchoredPosition = new Vector2(0.0f, 0.0f);
+        animator.SetTrigger("Change Menu");
     }
 }
