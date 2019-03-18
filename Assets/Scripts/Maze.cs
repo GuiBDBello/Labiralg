@@ -17,6 +17,7 @@ public class Maze : MonoBehaviour {
     public GameObject wall;
     public GameObject column;
     public GameObject ground;
+    public GameObject portal;
     public float wallThickness; // X
     public float wallHeight;    // Y
     public float wallLength;    // Z
@@ -27,6 +28,7 @@ public class Maze : MonoBehaviour {
 
     private GameObject WallHolder { get; set; }
     private GameObject PickUpHolder { get; set; }
+    private GameObject PortalHolder { get; set; }
     private Vector3 InitialPosition { get; set; }
     private Cell[] Cells { get; set; }
     private List<int> LastCells { get; set; }
@@ -48,18 +50,21 @@ public class Maze : MonoBehaviour {
 
         // Após terminar a criação dos muros, cria-se as células
         this.CreateCells();
-        
-        // Após criar os muros, gera o Labirinto
+
+        // Após criar as células, gera o Labirinto
         if (generateInstantly) {
             this.InstantlyCreateMaze();
         } else {
             this.SlowlyCreateMaze();
         }
 
+        // Cria uma co-rotina para 'Spawnar' os 'Pick Ups' pelo Labirinto
         if (this.SpawnPickUp != null) {
             StopCoroutine(this.SpawnPickUp);
         }
         this.SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
+
+        this.SpawnPortals();
     }
 
     // Update é chamado uma vez por frame
@@ -84,12 +89,57 @@ public class Maze : MonoBehaviour {
         this.PickUpHolder = new GameObject();
         this.PickUpHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
         this.PickUpHolder.name = "Pick Ups";
+
+        // Portals
+        this.PortalHolder = new GameObject();
+        this.PortalHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        this.PortalHolder.name = "Portals";
+    }
+
+    Vector3 GetMazePositionRandom() {
+        return new Vector3(
+            Random.Range((-xSize * wallLength) / 2, (xSize * wallLength) / 2),  // X
+            1.0f,                                                               // Y
+            Random.Range((-zSize * wallLength) / 2, (zSize * wallLength) / 2)   // Z
+        );
+    }
+
+    Vector3 GetMazePositionBottomLeft() {
+        return new Vector3(
+            ((-xSize * wallLength) / 2) + (wallLength / 2), // X
+            1.0f,                                           // Y
+            ((-zSize * wallLength) / 2) + (wallLength / 2)  // Z
+        );
+    }
+
+    Vector3 GetMazePositionBottomRight() {
+        return new Vector3(
+            ((xSize * wallLength) / 2) - (wallLength / 2),  // X
+            1.0f,                                           // Y
+            ((-zSize * wallLength) / 2) + (wallLength / 2)  // Z
+        );
+    }
+
+    Vector3 GetMazePositionUpperLeft() {
+        return new Vector3(
+            ((-xSize * wallLength) / 2) + (wallLength / 2), // X
+            1.0f,                                           // Y
+            ((zSize * wallLength) / 2) - (wallLength / 2)   // Z
+        );
+    }
+
+    Vector3 GetMazePositionUpperRight() {
+        return new Vector3(
+            ((xSize * wallLength) / 2) - (wallLength / 2),  // X
+            1.0f,                                           // Y
+            ((zSize * wallLength) / 2) - (wallLength / 2)   // Z
+        );
     }
 
     public IEnumerator SpawnPickUpInGameArea(float waitTime) {
         yield return new WaitForSeconds(waitTime);
         GameObject tempPickUp;
-        Vector3 spawnArea = new Vector3(Random.Range((-xSize * wallLength) / 2, (xSize * wallLength) / 2), 1.0f, Random.Range((-zSize * wallLength) / 2, (zSize * wallLength) / 2));
+        Vector3 spawnArea = this.GetMazePositionRandom();
         tempPickUp = Instantiate(pickUp, spawnArea, Quaternion.identity) as GameObject;
         tempPickUp.transform.parent = this.PickUpHolder.transform;
         // Chamada recursiva...
@@ -132,7 +182,7 @@ public class Maze : MonoBehaviour {
             }
         }
 
-        // Colunas
+        // Colunas (pilares)
         for (int i = 0; i <= zSize; i++) {
             for (int j = 0; j <= xSize; j++) {
                 myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), wallHeight / 2, this.InitialPosition.z + (i * wallLength) - (wallLength));
@@ -153,7 +203,7 @@ public class Maze : MonoBehaviour {
         tempGround.transform.parent = this.WallHolder.transform;
     }
 
-    void CreateCells () {
+    void CreateCells() {
         this.Cells = new Cell[xSize * zSize];
         this.LastCells = new List<int>();
         this.LastCells.Clear();
@@ -269,12 +319,12 @@ public class Maze : MonoBehaviour {
             }
         }
         // Leste
-        if (this.CurrentCell + 1 < this.Cells.Length && (this.CurrentCell + 1 ) != check) {
+        if (this.CurrentCell + 1 < this.Cells.Length && (this.CurrentCell + 1) != check) {
             if (this.Cells[this.CurrentCell + 1].visited == false) {
                 neighbours[length] = this.CurrentCell + 1;
                 connectingWall[length] = 3;
                 length++;
-            } 
+            }
         }
         // Norte
         if (this.CurrentCell + xSize < this.Cells.Length) {
@@ -314,5 +364,23 @@ public class Maze : MonoBehaviour {
                 Destroy(this.Cells[this.CurrentCell].north);
                 break;
         }
+    }
+
+    // TODO: Otimizar esse método
+    void SpawnPortals() {
+        GameObject tempPortal;
+
+        tempPortal = Instantiate(portal, this.GetMazePositionBottomLeft(), Quaternion.identity) as GameObject;
+        tempPortal.transform.parent = this.PortalHolder.transform;
+        
+        tempPortal = Instantiate(portal, this.GetMazePositionBottomRight(), Quaternion.identity) as GameObject;
+        tempPortal.transform.parent = this.PortalHolder.transform;
+        
+        tempPortal = Instantiate(portal, this.GetMazePositionUpperLeft(), Quaternion.identity) as GameObject;
+        tempPortal.transform.parent = this.PortalHolder.transform;
+
+        tempPortal = Instantiate(portal, this.GetMazePositionUpperRight(), Quaternion.identity) as GameObject;
+        tempPortal.transform.parent = this.PortalHolder.transform;
+        
     }
 }
