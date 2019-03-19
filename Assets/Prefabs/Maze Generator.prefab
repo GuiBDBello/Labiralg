@@ -48,6 +48,7 @@ MonoBehaviour:
   wall: {fileID: 5149487424246928484, guid: f063601674fd6be4495f4373b13deafe, type: 3}
   column: {fileID: 3509802277058951075, guid: 101f81946dc350248ad7e10536c62b32, type: 3}
   ground: {fileID: 6046520257097762338, guid: da4f3722f8996d74e9d90e18bcb064ac, type: 3}
+  portal: {fileID: 1643758668905870808, guid: c410cae0eb21ca94c918490eb8b41b7b, type: 3}
   wallThickness: 0.25
   wallHeight: 2
   wallLength: 5
