@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Maze : MonoBehaviour {
+public class Maze : MonoBehaviour
+{
     [System.Serializable]
-    public class Cell {
+    public class Cell
+    {
         public bool visited;
         public GameObject north;
         public GameObject south;
@@ -26,6 +28,7 @@ public class Maze : MonoBehaviour {
     public bool generateInstantly;
     public float generationSpeed;
 
+    // Propriedades
     private GameObject WallHolder { get; set; }
     private GameObject PickUpHolder { get; set; }
     private GameObject PortalHolder { get; set; }
@@ -40,63 +43,66 @@ public class Maze : MonoBehaviour {
     private bool StartedBuilding { get; set; }
     private Coroutine SpawnPickUp { get; set; }
 
-    // Start é chamado antes do primeiro frame
-    void Start() {
-        // Inicializa variáveis e propriedades
-        this.Init();
-
-        // Cria um grid com os muros
-        this.CreateWalls();
-
-        // Após terminar a criação dos muros, cria-se as células
-        this.CreateCells();
-
-        // Após criar as células, gera o Labirinto
-        if (generateInstantly) {
-            this.InstantlyCreateMaze();
-        } else {
-            this.SlowlyCreateMaze();
-        }
-
-        // Cria uma co-rotina para 'Spawnar' os 'Pick Ups' pelo Labirinto
-        if (this.SpawnPickUp != null) {
-            StopCoroutine(this.SpawnPickUp);
-        }
-        this.SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
-
-        this.SpawnPortals();
-    }
-
-    // Update é chamado uma vez por frame
-    void Update() { }
-
-    void Init() {
+    private void Init()
+    {
+        //Destroy(WallHolder);
         Destroy(PickUpHolder);
+        Destroy(PortalHolder);
 
-        this.VisitedCells = 0;
-        this.CurrentCell = 0;
-        this.CurrentNeighbour = 0;
-        this.WallToBreak = 0;
-        this.BackingUp = 0;
-        this.StartedBuilding = false;
+        VisitedCells = 0;
+        CurrentCell = 0;
+        CurrentNeighbour = 0;
+        WallToBreak = 0;
+        BackingUp = 0;
+        StartedBuilding = false;
 
         // Labirinto
-        this.WallHolder = new GameObject();
-        this.WallHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
-        this.WallHolder.name = "Maze";
+        WallHolder = new GameObject();
+        WallHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        WallHolder.name = "Maze";
 
         // Pick Ups
-        this.PickUpHolder = new GameObject();
-        this.PickUpHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
-        this.PickUpHolder.name = "Pick Ups";
+        PickUpHolder = new GameObject();
+        PickUpHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        PickUpHolder.name = "Pick Ups";
 
         // Portals
-        this.PortalHolder = new GameObject();
-        this.PortalHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
-        this.PortalHolder.name = "Portals";
+        PortalHolder = new GameObject();
+        PortalHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        PortalHolder.name = "Portals";
     }
 
-    Vector3 GetMazePositionRandom() {
+    // Start é chamado antes do primeiro frame
+    private void Start ()
+    {
+        // Inicializa variáveis e propriedades
+        Init();
+
+        CreateWalls();
+        CreateCells();
+
+        if (generateInstantly)
+        {
+            InstantlyCreateMaze();
+        }
+        else
+        {
+            WallHolder.AddComponent<Translator>();
+            SlowlyCreateMaze();
+        }
+
+        // Cria uma co-rotina para "Spawnar" os 'Pick Ups' pelo Labirinto
+        if (SpawnPickUp != null)
+        {
+            StopCoroutine(SpawnPickUp);
+        }
+        SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
+
+        SpawnPortals();
+    }
+
+    private Vector3 GetMazePositionRandom ()
+    {
         return new Vector3(
             Random.Range((-xSize * wallLength) / 2, (xSize * wallLength) / 2),  // X
             1.0f,                                                               // Y
@@ -104,7 +110,8 @@ public class Maze : MonoBehaviour {
         );
     }
 
-    Vector3 GetMazePositionBottomLeft() {
+    private Vector3 GetMazePositionBottomLeft ()
+    {
         return new Vector3(
             ((-xSize * wallLength) / 2) + (wallLength / 2), // X
             1.0f,                                           // Y
@@ -112,7 +119,8 @@ public class Maze : MonoBehaviour {
         );
     }
 
-    Vector3 GetMazePositionBottomRight() {
+    private Vector3 GetMazePositionBottomRight ()
+    {
         return new Vector3(
             ((xSize * wallLength) / 2) - (wallLength / 2),  // X
             1.0f,                                           // Y
@@ -120,7 +128,8 @@ public class Maze : MonoBehaviour {
         );
     }
 
-    Vector3 GetMazePositionUpperLeft() {
+    private Vector3 GetMazePositionUpperLeft ()
+    {
         return new Vector3(
             ((-xSize * wallLength) / 2) + (wallLength / 2), // X
             1.0f,                                           // Y
@@ -128,7 +137,8 @@ public class Maze : MonoBehaviour {
         );
     }
 
-    Vector3 GetMazePositionUpperRight() {
+    private Vector3 GetMazePositionUpperRight ()
+    {
         return new Vector3(
             ((xSize * wallLength) / 2) - (wallLength / 2),  // X
             1.0f,                                           // Y
@@ -136,34 +146,28 @@ public class Maze : MonoBehaviour {
         );
     }
 
-    public IEnumerator SpawnPickUpInGameArea(float waitTime) {
-        yield return new WaitForSeconds(waitTime);
-        GameObject tempPickUp;
-        Vector3 spawnArea = this.GetMazePositionRandom();
-        tempPickUp = Instantiate(pickUp, spawnArea, Quaternion.identity) as GameObject;
-        tempPickUp.transform.parent = this.PickUpHolder.transform;
-        // Chamada recursiva...
-        this.SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
-    }
-
-    void CreateWalls() {
+    // Cria um grid com os muros
+    private void CreateWalls ()
+    {
         // Posição do canto esquerdo inferior da tela
         //this.InitialPosition = new Vector3(0.0f, 0.0f, 0.0f);
         // Posição centralizada
-        this.InitialPosition = new Vector3((-xSize * wallLength / 2) + (wallLength / 2), 0.0f, (-zSize * wallLength / 2) + (wallLength));
-        Vector3 myPosition = this.InitialPosition;
+        InitialPosition = new Vector3((-xSize * wallLength / 2) + (wallLength / 2), 0.0f, (-zSize * wallLength / 2) + (wallLength));
+        Vector3 myPosition = InitialPosition;
         // TODO: Remover variável temporária, má prática
         GameObject tempWall;
         GameObject tempColumn;
         GameObject tempGround;
 
         // Colunas (muros)
-        for (int i = 0; i < zSize; i++) {
+        for (int i = 0; i < zSize; i++)
+        {
             // Maior ou igual (<=) é necessário pois retorna um muro a mais, a última coluna
-            for (int j = 0; j <= xSize; j++) {
-                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), wallHeight / 2, this.InitialPosition.z + (i * wallLength) - (wallLength / 2));
+            for (int j = 0; j <= xSize; j++)
+            {
+                myPosition = new Vector3(InitialPosition.x + (j * wallLength) - (wallLength / 2), wallHeight / 2, InitialPosition.z + (i * wallLength) - (wallLength / 2));
                 tempWall = Instantiate(wall, myPosition, Quaternion.identity) as GameObject;
-                tempWall.transform.parent = this.WallHolder.transform;
+                tempWall.transform.parent = WallHolder.transform;
                 // Tamanho do muro
                 wall.transform.localScale = new Vector3(wallThickness, wallHeight, wallLength - wallThickness);
             }
@@ -171,11 +175,13 @@ public class Maze : MonoBehaviour {
 
         // Linhas (muros)
         // Maior ou igual (<=) é necessário pois retorna um muro a mais, a última linha
-        for (int i = 0; i <= zSize; i++) {
-            for (int j = 0; j < xSize; j++) {
-                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength), wallHeight / 2, this.InitialPosition.z + (i * wallLength) - wallLength);
+        for (int i = 0; i <= zSize; i++)
+        {
+            for (int j = 0; j < xSize; j++)
+            {
+                myPosition = new Vector3(InitialPosition.x + (j * wallLength), wallHeight / 2, InitialPosition.z + (i * wallLength) - wallLength);
                 tempWall = Instantiate(wall, myPosition, Quaternion.Euler(0.0f, 90.0f, 0.0f)) as GameObject;
-                tempWall.transform.parent = this.WallHolder.transform;
+                tempWall.transform.parent = WallHolder.transform;
 
                 // Tamanho do muro
                 wall.transform.localScale = new Vector3(wallThickness, wallHeight, wallLength - wallThickness);
@@ -183,11 +189,13 @@ public class Maze : MonoBehaviour {
         }
 
         // Colunas (pilares)
-        for (int i = 0; i <= zSize; i++) {
-            for (int j = 0; j <= xSize; j++) {
-                myPosition = new Vector3(this.InitialPosition.x + (j * wallLength) - (wallLength / 2), wallHeight / 2, this.InitialPosition.z + (i * wallLength) - (wallLength));
+        for (int i = 0; i <= zSize; i++)
+        {
+            for (int j = 0; j <= xSize; j++)
+            {
+                myPosition = new Vector3(InitialPosition.x + (j * wallLength) - (wallLength / 2), wallHeight / 2, InitialPosition.z + (i * wallLength) - (wallLength));
                 tempColumn = Instantiate(column, myPosition, Quaternion.identity) as GameObject;
-                tempColumn.transform.parent = this.WallHolder.transform;
+                tempColumn.transform.parent = WallHolder.transform;
                 // Tamanho das colunas
                 column.transform.localScale = new Vector3(wallThickness, wallHeight, wallThickness);
             }
@@ -198,17 +206,19 @@ public class Maze : MonoBehaviour {
         // Tamanho do chão
         ground.transform.localScale = new Vector3(((wallLength / 10) * xSize) + (wallThickness / 10), 1.0f, ((wallLength / 10) * zSize) + (wallThickness / 10));
 
-        myPosition = new Vector3(this.InitialPosition.x + ((xSize * wallLength) / 2) - (wallLength / 2), 0.0f, this.InitialPosition.z + ((zSize * wallLength) / 2) - wallLength);
+        myPosition = new Vector3(InitialPosition.x + ((xSize * wallLength) / 2) - (wallLength / 2), 0.0f, InitialPosition.z + ((zSize * wallLength) / 2) - wallLength);
         tempGround = Instantiate(ground, myPosition, Quaternion.Euler(0.0f, 0.0f, 0.0f)) as GameObject;
-        tempGround.transform.parent = this.WallHolder.transform;
+        tempGround.transform.parent = WallHolder.transform;
     }
+    
+        // Após terminar a criação dos muros, cria-se as células
+    private void CreateCells ()
+    {
+        Cells = new Cell[xSize * zSize];
+        LastCells = new List<int>();
+        LastCells.Clear();
 
-    void CreateCells() {
-        this.Cells = new Cell[xSize * zSize];
-        this.LastCells = new List<int>();
-        this.LastCells.Clear();
-
-        int children = this.WallHolder.transform.childCount;
+        int children = WallHolder.transform.childCount;
         int westEastProcess = 0;
         int childProcess = 0;
         int termCount = 0;
@@ -216,79 +226,91 @@ public class Maze : MonoBehaviour {
         GameObject[] allWalls = new GameObject[children];
 
         // Retorna todos os filhos
-        for (int i = 0; i < children; i++) {
-            allWalls[i] = this.WallHolder.transform.GetChild(i).gameObject;
+        for (int i = 0; i < children; i++)
+        {
+            allWalls[i] = WallHolder.transform.GetChild(i).gameObject;
         }
 
         // Vincula muros às células
-        for (int cellprocess = 0; cellprocess < this.Cells.Length; cellprocess++) {
+        for (int cellprocess = 0; cellprocess < Cells.Length; cellprocess++)
+        {
             // Verifica se é a última célula da linha
-            if (termCount == xSize) {
+            if (termCount == xSize)
+            {
                 // Pula uma célula e zera a "coluna" (pula para a próxima coluna)
                 westEastProcess++;
                 termCount = 0;
             }
 
-            this.Cells[cellprocess] = new Cell();
-            this.Cells[cellprocess].west = allWalls[westEastProcess];
-            this.Cells[cellprocess].south = allWalls[childProcess + ((xSize + 1) * zSize)];
+            Cells[cellprocess] = new Cell();
+            Cells[cellprocess].west = allWalls[westEastProcess];
+            Cells[cellprocess].south = allWalls[childProcess + ((xSize + 1) * zSize)];
 
             westEastProcess++;
             termCount++;
             childProcess++;
 
-            this.Cells[cellprocess].east = allWalls[westEastProcess];
-            this.Cells[cellprocess].north = allWalls[(childProcess + ((xSize + 1) * zSize)) + xSize - 1];
+            Cells[cellprocess].east = allWalls[westEastProcess];
+            Cells[cellprocess].north = allWalls[(childProcess + ((xSize + 1) * zSize)) + xSize - 1];
         }
     }
 
-    void CreateMaze() {
-        if (this.StartedBuilding) {
-            this.GiveMeNeighbour();
+    // Após criar as células, gera o Labirinto
+    private void CreateMaze ()
+    {
+        if (StartedBuilding)
+        {
+            GiveMeNeighbour();
             // Se a célula vizinha não foi visitada, e a célula atual já foi, quebra o muro entre elas
-            if (this.Cells[this.CurrentNeighbour].visited == false && this.Cells[this.CurrentCell].visited == true) {
-                this.BreakWall();
-                this.Cells[this.CurrentNeighbour].visited = true;
-                this.LastCells.Add(this.CurrentCell);
-                this.CurrentCell = this.CurrentNeighbour;
-                this.VisitedCells++;
+            if (Cells[CurrentNeighbour].visited == false && Cells[CurrentCell].visited == true)
+            {
+                BreakWall();
+                Cells[CurrentNeighbour].visited = true;
+                LastCells.Add(CurrentCell);
+                CurrentCell = CurrentNeighbour;
+                VisitedCells++;
                 // Restaura o valor de retorno se não encontra nenhum vizinho
-                if (this.LastCells.Count > 0) {
-                    this.BackingUp = this.LastCells.Count - 1;
+                if (LastCells.Count > 0)
+                {
+                    BackingUp = LastCells.Count - 1;
                 }
             }
-        } else {
+        }
+        else
+        {
             // Escolhe uma célula aleatória para iniciar a construção do Labirinto
-            this.CurrentCell = Random.Range(0, this.Cells.Length);
-            this.Cells[this.CurrentCell].visited = true;
-            this.VisitedCells++;
-            this.StartedBuilding = true;
+            CurrentCell = Random.Range(0, Cells.Length);
+            Cells[CurrentCell].visited = true;
+            VisitedCells++;
+            StartedBuilding = true;
         }
     }
 
-    void InstantlyCreateMaze() {
-        while (this.VisitedCells < this.Cells.Length) {
-            this.CreateMaze();
+    private void InstantlyCreateMaze ()
+    {
+        while (VisitedCells < Cells.Length)
+        {
+            CreateMaze ();
         }
     }
 
-    void SlowlyCreateMaze() {
-        if (this.VisitedCells < this.Cells.Length) {
-            this.CreateMaze();
+    private void SlowlyCreateMaze ()
+    {
+        if (VisitedCells < Cells.Length)
+        {
+            CreateMaze ();
             // Chamada recursiva
             Invoke("SlowlyCreateMaze", generationSpeed);
-        } else {
-            StartCoroutine(RecreateMaze(3.0f));
+        }
+        else
+        {
+            StartCoroutine (RecreateMaze (3.0f));
         }
     }
 
-    IEnumerator RecreateMaze(float waitTime) {
-        yield return new WaitForSeconds(waitTime);
-        Destroy(WallHolder);
-        this.Start();
-    }
-
-    void GiveMeNeighbour() {
+    // Busca as células vizinhas da célula atual
+    private void GiveMeNeighbour ()
+    {
         int length = 0;
         int[] neighbours = new int[4];
         int[] connectingWall = new int[4];
@@ -296,91 +318,123 @@ public class Maze : MonoBehaviour {
 
         // Verifica se está na última célula da linha
         // TODO: Refatorar para método
-        check = (this.CurrentCell + 1) / xSize;
+        check = (CurrentCell + 1) / xSize;
         check -= 1;
         check *= xSize;
         check += xSize;
 
         // TODO: Refatorar para método
         // Sul
-        if (this.CurrentCell - xSize >= 0) {
-            if (this.Cells[this.CurrentCell - xSize].visited == false) {
-                neighbours[length] = this.CurrentCell - xSize;
+        if (CurrentCell - xSize >= 0)
+        {
+            if (Cells[CurrentCell - xSize].visited == false)
+            {
+                neighbours[length] = CurrentCell - xSize;
                 connectingWall[length] = 1;
                 length++;
             }
         }
         // Oeste
-        if (this.CurrentCell - 1 >= 0 && this.CurrentCell != check) {
-            if (this.Cells[this.CurrentCell - 1].visited == false) {
-                neighbours[length] = this.CurrentCell - 1;
+        if (CurrentCell - 1 >= 0 && CurrentCell != check)
+        {
+            if (Cells[CurrentCell - 1].visited == false)
+            {
+                neighbours[length] = CurrentCell - 1;
                 connectingWall[length] = 2;
                 length++;
             }
         }
         // Leste
-        if (this.CurrentCell + 1 < this.Cells.Length && (this.CurrentCell + 1) != check) {
-            if (this.Cells[this.CurrentCell + 1].visited == false) {
-                neighbours[length] = this.CurrentCell + 1;
+        if (CurrentCell + 1 < Cells.Length && (CurrentCell + 1) != check)
+        {
+            if (Cells[CurrentCell + 1].visited == false)
+            {
+                neighbours[length] = CurrentCell + 1;
                 connectingWall[length] = 3;
                 length++;
             }
         }
         // Norte
-        if (this.CurrentCell + xSize < this.Cells.Length) {
-            if (this.Cells[this.CurrentCell + xSize].visited == false) {
-                neighbours[length] = this.CurrentCell + xSize;
+        if (CurrentCell + xSize < Cells.Length)
+        {
+            if (Cells[CurrentCell + xSize].visited == false)
+            {
+                neighbours[length] = CurrentCell + xSize;
                 connectingWall[length] = 4;
                 length++;
             }
         }
 
         // Busca um vizinho aleatório
-        if (length != 0) {
+        if (length != 0)
+        {
             int theChosenOne = Random.Range(0, length);
-            this.CurrentNeighbour = neighbours[theChosenOne];
-            this.WallToBreak = connectingWall[theChosenOne];
-        } else {
+            CurrentNeighbour = neighbours[theChosenOne];
+            WallToBreak = connectingWall[theChosenOne];
+        }
+        else
+        {
             // Ao encontrar um caminho sem-saída, faz o caminho inverso até encontrar uma saída
-            if (this.BackingUp > 0) {
-                this.CurrentCell = this.LastCells[this.BackingUp];
-                this.BackingUp--;
+            if (BackingUp > 0)
+            {
+                CurrentCell = LastCells[BackingUp];
+                BackingUp--;
             }
         }
     }
 
-    void BreakWall() {
-        switch (this.WallToBreak) {
+    private void BreakWall ()
+    {
+        switch (WallToBreak)
+        {
             case 1:
-                Destroy(this.Cells[this.CurrentCell].south);
+                Destroy (Cells[CurrentCell].south);
                 break;
             case 2:
-                Destroy(this.Cells[this.CurrentCell].west);
+                Destroy (Cells[CurrentCell].west);
                 break;
             case 3:
-                Destroy(this.Cells[this.CurrentCell].east);
+                Destroy (Cells[CurrentCell].east);
                 break;
             case 4:
-                Destroy(this.Cells[this.CurrentCell].north);
+                Destroy (Cells[CurrentCell].north);
                 break;
         }
     }
 
     // TODO: Otimizar esse método
-    void SpawnPortals() {
+    private void SpawnPortals ()
+    {
         GameObject tempPortal;
 
-        tempPortal = Instantiate(portal, this.GetMazePositionBottomLeft(), Quaternion.identity) as GameObject;
-        tempPortal.transform.parent = this.PortalHolder.transform;
+        tempPortal = Instantiate (portal, GetMazePositionBottomLeft(), Quaternion.identity) as GameObject;
+        tempPortal.transform.parent = PortalHolder.transform;
         
-        tempPortal = Instantiate(portal, this.GetMazePositionBottomRight(), Quaternion.identity) as GameObject;
-        tempPortal.transform.parent = this.PortalHolder.transform;
+        tempPortal = Instantiate (portal, GetMazePositionBottomRight(), Quaternion.identity) as GameObject;
+        tempPortal.transform.parent = PortalHolder.transform;
         
-        tempPortal = Instantiate(portal, this.GetMazePositionUpperLeft(), Quaternion.identity) as GameObject;
-        tempPortal.transform.parent = this.PortalHolder.transform;
+        tempPortal = Instantiate (portal, GetMazePositionUpperLeft(), Quaternion.identity) as GameObject;
+        tempPortal.transform.parent = PortalHolder.transform;
 
-        tempPortal = Instantiate(portal, this.GetMazePositionUpperRight(), Quaternion.identity) as GameObject;
-        tempPortal.transform.parent = this.PortalHolder.transform;
-        
+        tempPortal = Instantiate (portal, GetMazePositionUpperRight(), Quaternion.identity) as GameObject;
+        tempPortal.transform.parent = PortalHolder.transform;
+    }
+
+    private IEnumerator SpawnPickUpInGameArea(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        GameObject tempPickUp;
+        Vector3 spawnArea = GetMazePositionRandom();
+        tempPickUp = Instantiate(pickUp, spawnArea, Quaternion.identity) as GameObject;
+        tempPickUp.transform.parent = PickUpHolder.transform;
+        // Chamada recursiva...
+        SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
+    }
+
+    private IEnumerator RecreateMaze(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        Destroy(WallHolder);
+        Start();
     }
 }

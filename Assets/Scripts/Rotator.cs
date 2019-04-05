@@ -1,10 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Rotator : MonoBehaviour {
-    // Update is called once per frame
-    void Update() {
-        transform.Rotate(new Vector3 (15, 30, 45) * Time.deltaTime);
+// Classe criada para girar um Objeto;
+public class Rotator : MonoBehaviour
+{
+    private Vector3 rotationAxis;
+
+    private void Init ()
+    {
+        rotationAxis = new Vector3(15, 30, 45);
+    }
+
+    private void Start ()
+    {
+        Init();
+    }
+    void Update ()
+    {
+        transform.Rotate(rotationAxis * Time.deltaTime);
     }
 }

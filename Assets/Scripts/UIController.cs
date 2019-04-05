@@ -1,24 +1,15 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class UIController : MonoBehaviour {
-    // Start is called before the first frame update
-    void Start() {
-
+public class UIController : MonoBehaviour
+{
+    public void ButtonSurvivalPressed ()
+    {
+        SceneManager.LoadScene(Scenes.SceneSurvival);
     }
 
-    // Update is called once per frame
-    void Update() {
-
-    }
-
-    public void ButtonSurvivalPressed() {
-        SceneManager.LoadScene("Scene Survival");
-    }
-
-    public void ButtonQuitPressed() {
+    public void ButtonQuitPressed ()
+    {
         Application.Quit();
     }
 }

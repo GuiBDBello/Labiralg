@@ -576,7 +576,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc2791d067b770442859e1f44593b3a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 557190894}
+  player: {fileID: 557190894}
 --- !u!1 &557190894
 GameObject:
   m_ObjectHideFlags: 0
@@ -683,8 +683,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 100
+  jumpForce: 1000
+  jumpDelay: 1
   scoreText: {fileID: 120072912}
   winText: {fileID: 297257013}
+  jump: {x: 0, y: 0, z: 0}
 --- !u!54 &557190900
 Rigidbody:
   m_ObjectHideFlags: 0
