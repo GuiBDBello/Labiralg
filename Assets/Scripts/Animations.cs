@@ -3,7 +3,8 @@
 // Classe criada para armazenar todas as Animations do Jogo;
 public class Animations : MonoBehaviour
 {
+    public const string ChangeMenu = "Change Menu";
     public const string FadeIn = "Fade In";
     public const string FadeOut = "Fade Out";
-    public const string ChangeMenu = "Change Menu";
+    public const string Zoom = "Zoom";
 }
