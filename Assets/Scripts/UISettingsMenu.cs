@@ -13,7 +13,7 @@ public class UISettingsMenu : MonoBehaviour
     private List<string> options;
     private int currentResolutionIndex;
 
-    private void Init()
+    private void Init ()
     {
         resolutions = Screen.resolutions;
         resolutionDropdown.ClearOptions();
