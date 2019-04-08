@@ -28,6 +28,8 @@ public class Maze : MonoBehaviour
     public bool generateInstantly;
     public float generationSpeed;
 
+    private Zoom zoom;
+
     // Propriedades
     private GameObject WallHolder { get; set; }
     private GameObject PickUpHolder { get; set; }
@@ -70,6 +72,8 @@ public class Maze : MonoBehaviour
         PortalHolder = new GameObject();
         PortalHolder.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
         PortalHolder.name = "Portals";
+
+        zoom = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Zoom>();
     }
 
     // Start é chamado antes do primeiro frame
@@ -87,7 +91,6 @@ public class Maze : MonoBehaviour
         }
         else
         {
-            WallHolder.AddComponent<Translator>();
             SlowlyCreateMaze();
         }
 
@@ -431,10 +434,24 @@ public class Maze : MonoBehaviour
         SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
     }
 
-    private IEnumerator RecreateMaze(float waitTime)
+    public IEnumerator RecreateMaze(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
         Destroy(WallHolder);
         Start();
+    }
+
+    public void NextMaze ()
+    {
+        xSize++;
+        zSize++;
+
+        zoom.ChangeZoom();
+
+        //GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().
+
+        StartCoroutine(RecreateMaze(0.1f));
+
+        zoom.ChangeZoom();
     }
 }

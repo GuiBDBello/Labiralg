@@ -1,14 +1,19 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
 
 public class PlayerController : MonoBehaviour
 {
     public float speed;
     public float jumpForce;
     public float jumpDelay;
+    public float cronometer;
     public Text scoreText;
-    public Text winText;
+    public Text timeText;
+    public Text dashText;
+    public Maze maze;
+    public Zoom zoom;
 
     private Vector3 movement;
     public Vector3 jump;
@@ -18,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private float initialSpeed;
     private float moveHorizontal;
     private float moveVertical;
+    private int dashQuantity;
     private float dashForce;
     private float score;
 
@@ -29,10 +35,10 @@ public class PlayerController : MonoBehaviour
         initialMass = rb.mass;
         initialDrag = rb.drag;
         initialSpeed = speed;
+        dashQuantity = 0;
         dashForce = 20f;
         score = 0;
-        SetScoreText();
-        winText.text = "";
+        UpdateHUD();
     }
 
     // Método chamado no primeiro frame que o script é ativo
@@ -44,10 +50,14 @@ public class PlayerController : MonoBehaviour
     // Método chamado antes de renderizar um frame
     private void Update ()
     {
+        // TODO: Debug only, must be removed before release;
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
+        cronometer -= Time.deltaTime;
+        UpdateHUD();
     }
 
     // Chamado antes de realizar cálculos de física
@@ -64,18 +74,18 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag(Tags.PickUp))
         {
             other.gameObject.SetActive(false);
-            score++;
-            SetScoreText();
+            dashQuantity+=10;
         }
         if (other.gameObject.CompareTag(Tags.Portal))
         {
-            Debug.Log("Tocou no Portal");
+            score++;
+            zoom.ChangeZoom();
         }
         //Destroy(other.gameObject);
     }
 
     // Movimenta o Jogador
-    private void Move()
+    private void Move ()
     {
         moveHorizontal = Input.GetAxis("Horizontal");
         moveVertical = Input.GetAxis("Vertical");
@@ -90,11 +100,15 @@ public class PlayerController : MonoBehaviour
         // Realiza um "dash" na direção pressionada,
         // enquanto aumenta a massa e diminui a velocidade,
         // deixando o Player mais lento com o passar do tempo
-        if (Input.GetKey (KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            rb.AddForce(movement * speed * dashForce);
-            rb.mass = initialMass * dashForce;
-            speed = speed / 1.5f;
+            if (dashQuantity > 0)
+            {
+                rb.AddForce(movement * speed * dashForce);
+                rb.mass = initialMass * dashForce;
+                speed = speed / 1.5f;
+                dashQuantity--;
+            }
         }
         else
         {
@@ -104,9 +118,9 @@ public class PlayerController : MonoBehaviour
     }
 
     // Faz o Jogador pular
-    private void Jump()
+    private void Jump ()
     {
-        if (Input.GetKeyDown (KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (transform.position.y < 0.75 && jumpDelay <= 0)
             {
@@ -124,8 +138,10 @@ public class PlayerController : MonoBehaviour
         jumpDelay -= Time.deltaTime;
     }
 
-    private void SetScoreText ()
+    private void UpdateHUD ()
     {
         scoreText.text = "Score: " + score.ToString();
+        timeText.text = "Time: " + cronometer.ToString();
+        dashText.text = "Dash: " + dashQuantity.ToString();
     }
 }
