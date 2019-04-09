@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     public Zoom zoom;
 
     private Vector3 movement;
-    public Vector3 jump;
+    private Vector3 jump;
     private Rigidbody rb;
     private float initialMass;
     private float initialDrag;
@@ -38,7 +38,6 @@ public class PlayerController : MonoBehaviour
         dashQuantity = 0;
         dashForce = 20f;
         score = 0;
-        UpdateHUD();
     }
 
     // Método chamado no primeiro frame que o script é ativo
@@ -56,7 +55,14 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        cronometer -= Time.deltaTime;
+        if (cronometer > 0)
+        {
+            Countdown();
+        }
+        else
+        {
+            TimesUp();
+        }
         UpdateHUD();
     }
 
@@ -65,7 +71,7 @@ public class PlayerController : MonoBehaviour
     {
         Move();
         Dash();
-        Jump();
+        //Jump();
     }
 
     // Chamado quando ocorre uma colisão no objeto que esse script é atribuído
@@ -140,8 +146,17 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateHUD ()
     {
-        scoreText.text = "Score: " + score.ToString();
-        timeText.text = "Time: " + cronometer.ToString();
-        dashText.text = "Dash: " + dashQuantity.ToString();
+        scoreText.text = "Score: " + score;
+        timeText.text = "Time: " + Math.Round(cronometer, 2);
+        dashText.text = "Dash: " + dashQuantity;
+    }
+
+    private void Countdown()
+    {
+        cronometer -= Time.deltaTime;
+    }
+    private void TimesUp()
+    {
+        Time.timeScale = 0;
     }
 }
