@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public Text scoreText;
     public Text timeText;
     public Text dashText;
+    public GameObject endGamePanel;
     public Maze maze;
     public Zoom zoom;
 
@@ -55,7 +56,7 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (cronometer > 0)
+        if (cronometer > 0.0f)
         {
             Countdown();
         }
@@ -157,6 +158,8 @@ public class PlayerController : MonoBehaviour
     }
     private void TimesUp()
     {
-        Time.timeScale = 0;
+        cronometer = 0.0f;
+        Time.timeScale = 0.0f;
+        endGamePanel.SetActive(true);
     }
 }
