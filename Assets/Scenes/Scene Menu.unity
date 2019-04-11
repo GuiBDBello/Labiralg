@@ -935,7 +935,7 @@ GameObject:
   - component: {fileID: 344065569}
   - component: {fileID: 344065568}
   m_Layer: 5
-  m_Name: Button Music
+  m_Name: Button Achievements
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2558,6 +2558,7 @@ GameObject:
   - component: {fileID: 1053027763}
   - component: {fileID: 1053027764}
   - component: {fileID: 1053027765}
+  - component: {fileID: 1053027766}
   m_Layer: 0
   m_Name: Menu
   m_TagString: Untagged
@@ -2627,6 +2628,18 @@ MonoBehaviour:
   audioMixer: {fileID: 24100000, guid: 9ddbae6a970c3ec49aca5d294ba9e44a, type: 2}
   resolutionDropdown: {fileID: 1572677282}
   animator: {fileID: 1053027763}
+--- !u!114 &1053027766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1053027761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f6168aafd0a9584c9ad1dd1255eb712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1090801255
 GameObject:
   m_ObjectHideFlags: 0
@@ -3221,7 +3234,7 @@ GameObject:
   - component: {fileID: 1481017141}
   - component: {fileID: 1481017140}
   m_Layer: 5
-  m_Name: Button Sound
+  m_Name: Button Leaderboards
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3285,7 +3298,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1481017141}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1664936034}
+        m_MethodName: OnButtonShowLeaderboard
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1481017141

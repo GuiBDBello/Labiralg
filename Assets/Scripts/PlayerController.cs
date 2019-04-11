@@ -26,7 +26,10 @@ public class PlayerController : MonoBehaviour
     private float moveVertical;
     private int dashQuantity;
     private float dashForce;
-    private float score;
+    private long score;
+    private long levelScore;
+    private long pickupScore;
+    private long portalScore;
 
     // Inicia os valores das propriedades
     private void Init ()
@@ -39,6 +42,9 @@ public class PlayerController : MonoBehaviour
         dashQuantity = 0;
         dashForce = 20f;
         score = 0;
+        levelScore = maze.xSize * maze.zSize;
+        pickupScore = 10;
+        portalScore = 100;
     }
 
     // Método chamado no primeiro frame que o script é ativo
@@ -82,11 +88,13 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             dashQuantity+=10;
+            score += pickupScore;
         }
         if (other.gameObject.CompareTag(Tags.Portal))
         {
-            score++;
+            cronometer += ((maze.xSize + maze.zSize) / 2);
             zoom.ChangeZoom();
+            score += ((long) (portalScore));
         }
         //Destroy(other.gameObject);
     }
