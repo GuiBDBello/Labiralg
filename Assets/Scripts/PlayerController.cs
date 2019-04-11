@@ -102,8 +102,10 @@ public class PlayerController : MonoBehaviour
     // Movimenta o Jogador
     private void Move ()
     {
-        moveHorizontal = Input.GetAxis("Horizontal");
-        moveVertical = Input.GetAxis("Vertical");
+        //moveHorizontal = Input.GetAxis("Horizontal");
+        moveHorizontal = Input.acceleration.x;
+        //moveVertical = Input.GetAxis("Vertical");
+        moveVertical = Input.acceleration.y;
 
         movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         rb.AddForce(movement * speed);
