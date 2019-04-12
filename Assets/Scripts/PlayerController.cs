@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public GameObject endGamePanel;
     public Maze maze;
     public Zoom zoom;
+    public Joystick joystick;
 
     private Vector3 movement;
     private Vector3 jump;
@@ -30,6 +31,8 @@ public class PlayerController : MonoBehaviour
     private long levelScore;
     private long pickupScore;
     private long portalScore;
+    private float offsetHorizontalAcceleration;
+    private float offsetVerticalAcceleration;
 
     // Inicia os valores das propriedades
     private void Init ()
@@ -102,10 +105,11 @@ public class PlayerController : MonoBehaviour
     // Movimenta o Jogador
     private void Move ()
     {
-        //moveHorizontal = Input.GetAxis("Horizontal");
-        moveHorizontal = Input.acceleration.x;
-        //moveVertical = Input.GetAxis("Vertical");
-        moveVertical = Input.acceleration.y;
+        moveHorizontal = Input.GetAxis("Horizontal") + joystick.Horizontal;
+        moveVertical = Input.GetAxis("Vertical") + joystick.Vertical;
+
+        Debug.Log(moveHorizontal);
+        Debug.Log(moveVertical);
 
         movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         rb.AddForce(movement * speed);
