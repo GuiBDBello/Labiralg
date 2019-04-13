@@ -5,7 +5,6 @@
 [Bb]uilds/
 [Kk]ey[Ss]tores/
 Assets/AssetStoreTools*
-Assets/GooglePlayGames/
 
 # Visual Studio cache directory
 .vs/
@@ -39,3 +38,5 @@ sysinfo.txt
 
 # GPGS
 GPGSIds.*
+Assets/GooglePlayGames/
+ProjectSettings/GooglePlayGameSettings.txt
