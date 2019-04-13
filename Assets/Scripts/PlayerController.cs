@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     public Maze maze;
     public Zoom zoom;
     public Joystick joystick;
+    public Joybutton joybutton;
 
     private Vector3 movement;
     private Vector3 jump;
@@ -108,8 +109,8 @@ public class PlayerController : MonoBehaviour
         moveHorizontal = Input.GetAxis("Horizontal") + joystick.Horizontal;
         moveVertical = Input.GetAxis("Vertical") + joystick.Vertical;
 
-        Debug.Log(moveHorizontal);
-        Debug.Log(moveVertical);
+        //Debug.Log(moveHorizontal);
+        //Debug.Log(moveVertical);
 
         movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         rb.AddForce(movement * speed);
@@ -121,7 +122,7 @@ public class PlayerController : MonoBehaviour
         // Realiza um "dash" na direção pressionada,
         // enquanto aumenta a massa e diminui a velocidade,
         // deixando o Player mais lento com o passar do tempo
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (joybutton.Pressed)
         {
             if (dashQuantity > 0)
             {

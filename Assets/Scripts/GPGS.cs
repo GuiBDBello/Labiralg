@@ -16,12 +16,6 @@ public class GPGS : MonoBehaviour
         AuthenticateUser();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void AuthenticateUser()
     {
         PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().Build();
