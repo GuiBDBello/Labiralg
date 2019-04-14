@@ -32,8 +32,8 @@ public class PlayerController : MonoBehaviour
     private long levelScore;
     private long pickupScore;
     private long portalScore;
-    private float offsetHorizontalAcceleration;
-    private float offsetVerticalAcceleration;
+    private float timeSurvived;
+    private int pickUpsCollected;
 
     // Inicia os valores das propriedades
     private void Init ()
@@ -49,7 +49,9 @@ public class PlayerController : MonoBehaviour
         levelScore = maze.xSize * maze.zSize;
         pickupScore = 10;
         portalScore = 100;
-    }
+        timeSurvived = 0;
+        pickUpsCollected = 0;
+}
 
     // Método chamado no primeiro frame que o script é ativo
     private void Start ()
@@ -98,7 +100,7 @@ public class PlayerController : MonoBehaviour
         {
             cronometer += ((maze.xSize + maze.zSize) / 2);
             zoom.ChangeZoom();
-            score += ((long) (portalScore));
+            score += ((long) (portalScore)) + (maze.xSize * maze.zSize);
         }
         //Destroy(other.gameObject);
     }
@@ -165,6 +167,7 @@ public class PlayerController : MonoBehaviour
         scoreText.text = "Score: " + score;
         timeText.text = "Time: " + Math.Round(cronometer, 2);
         dashText.text = "Dash: " + dashQuantity;
+        timeSurvived += Time.deltaTime;
     }
 
     private void Countdown()
@@ -176,5 +179,9 @@ public class PlayerController : MonoBehaviour
         cronometer = 0.0f;
         Time.timeScale = 0.0f;
         endGamePanel.SetActive(true);
+        UIEndGameMenu.textTime.text = "Você sobreviveu por " + timeSurvived + "s";
+        UIEndGameMenu.textItems.text = "Itens coletados: " + pickUpsCollected;
+        UIEndGameMenu.textTime.text = "Labirintos finalizados: " + (maze.xSize - 5);
+        UIEndGameMenu.textTime.text = "Pontuação total: " + score;
     }
 }
