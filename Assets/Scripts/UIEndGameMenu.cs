@@ -4,10 +4,10 @@ using UnityEngine.UI;
 
 public class UIEndGameMenu : MonoBehaviour
 {
-    public static Text textTime;
-    public static Text textItems;
-    public static Text textMazes;
-    public static Text textTotalScore;
+    public Text textTime;
+    public Text textItems;
+    public Text textMazes;
+    public Text textTotalScore;
 
     public void ButtonRestartPressed()
     {

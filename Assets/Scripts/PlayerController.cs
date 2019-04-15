@@ -17,7 +17,9 @@ public class PlayerController : MonoBehaviour
     public Zoom zoom;
     public Joystick joystick;
     public Joybutton joybutton;
-
+    public UIEndGameMenu uiEndGameMenu;
+    public bool isPlayable;
+    
     private Vector3 movement;
     private Vector3 jump;
     private Rigidbody rb;
@@ -47,10 +49,11 @@ public class PlayerController : MonoBehaviour
         dashForce = 20f;
         score = 0;
         levelScore = maze.xSize * maze.zSize;
-        pickupScore = 10;
+        pickupScore = 50;
         portalScore = 100;
         timeSurvived = 0;
         pickUpsCollected = 0;
+        isPlayable = true;
 }
 
     // Método chamado no primeiro frame que o script é ativo
@@ -68,23 +71,29 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (cronometer > 0.0f)
+        if (isPlayable)
         {
-            Countdown();
+            if (cronometer > 0.0f)
+            {
+                Countdown();
+                UpdateHUD();
+            }
+            else
+            {
+                TimesUp();
+            }
         }
-        else
-        {
-            TimesUp();
-        }
-        UpdateHUD();
     }
 
     // Chamado antes de realizar cálculos de física
     private void FixedUpdate ()
     {
-        Move();
-        Dash();
-        //Jump();
+        if (isPlayable)
+        {
+            Move();
+            Dash();
+            //Jump();
+        }
     }
 
     // Chamado quando ocorre uma colisão no objeto que esse script é atribuído
@@ -93,14 +102,16 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag(Tags.PickUp))
         {
             other.gameObject.SetActive(false);
-            dashQuantity+=10;
+            dashQuantity += 10;
+            pickUpsCollected ++;
             score += pickupScore;
         }
         if (other.gameObject.CompareTag(Tags.Portal))
         {
-            cronometer += ((maze.xSize + maze.zSize) / 2);
-            zoom.ChangeZoom();
+            cronometer += ((maze.xSize + maze.zSize) / 4);
             score += ((long) (portalScore)) + (maze.xSize * maze.zSize);
+            isPlayable = false;
+            zoom.ChangeZoom();
         }
         //Destroy(other.gameObject);
     }
@@ -164,9 +175,9 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateHUD ()
     {
-        scoreText.text = "Score: " + score;
-        timeText.text = "Time: " + Math.Round(cronometer, 2);
-        dashText.text = "Dash: " + dashQuantity;
+        scoreText.text = "Pontuação: " + score;
+        timeText.text = "Tempo: " + Math.Round(cronometer, 2);
+        dashText.text = "Investida: " + dashQuantity;
         timeSurvived += Time.deltaTime;
     }
 
@@ -176,12 +187,27 @@ public class PlayerController : MonoBehaviour
     }
     private void TimesUp()
     {
+        isPlayable = false;
         cronometer = 0.0f;
-        Time.timeScale = 0.0f;
         endGamePanel.SetActive(true);
-        UIEndGameMenu.textTime.text = "Você sobreviveu por " + timeSurvived + "s";
-        UIEndGameMenu.textItems.text = "Itens coletados: " + pickUpsCollected;
-        UIEndGameMenu.textTime.text = "Labirintos finalizados: " + (maze.xSize - 5);
-        UIEndGameMenu.textTime.text = "Pontuação total: " + score;
+        uiEndGameMenu.textTime.text = "Você sobreviveu por " + Math.Round(timeSurvived, 2) + "s";
+        uiEndGameMenu.textItems.text = "Itens coletados: " + pickUpsCollected;
+        uiEndGameMenu.textMazes.text = "Labirintos concluídos: " + (maze.xSize - 5);
+        uiEndGameMenu.textTotalScore.text = "Pontuação total: " + score;
+        PostScore(score.ToString());
+    }
+
+    private void PostScore(string score)
+    {
+        long scoreToPost;
+
+        if (long.TryParse(score, out scoreToPost))
+        {
+            GPGS.PostToLeaderboard(scoreToPost);
+        }
+        else
+        {
+            Debug.Log("Error: Could not post score to leaderboard.Please enter a valid score value.");
+        }
     }
 }

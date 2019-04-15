@@ -22,6 +22,7 @@ public class Zoom : MonoBehaviour
     public void OnZoomComplete()
     {
         GameObject.FindGameObjectWithTag(Tags.Player).GetComponent<Rigidbody>().transform.position = playerStartPosition;
+        GameObject.FindGameObjectWithTag(Tags.Player).GetComponent<PlayerController>().isPlayable = true;
         maze.NextMaze();
     }
 }
