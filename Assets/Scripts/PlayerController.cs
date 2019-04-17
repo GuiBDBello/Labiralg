@@ -194,20 +194,7 @@ public class PlayerController : MonoBehaviour
         uiEndGameMenu.textItems.text = "Itens coletados: " + pickUpsCollected;
         uiEndGameMenu.textMazes.text = "Labirintos concluídos: " + (maze.xSize - 5);
         uiEndGameMenu.textTotalScore.text = "Pontuação total: " + score;
-        PostScore(score.ToString());
-    }
 
-    private void PostScore(string score)
-    {
-        long scoreToPost;
-
-        if (long.TryParse(score, out scoreToPost))
-        {
-            GPGS.PostToLeaderboard(scoreToPost);
-        }
-        else
-        {
-            Debug.Log("Error: Could not post score to leaderboard.Please enter a valid score value.");
-        }
+        GPGS.PostToLeaderboard(score);
     }
 }

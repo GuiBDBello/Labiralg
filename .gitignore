@@ -38,7 +38,4 @@ sysinfo.txt
 
 # GPGS
 GPGSIds.*
-Assets/GooglePlayGames/Editor/GooglePlayGamesPluginDependencies.xml
-Assets/GooglePlayGames/GameInfo.cs
-Assets/GooglePlayGames/Plugins/Android/GooglePlayGamesManifest.plugin/AndroidManifest.xml
 ProjectSettings/GooglePlayGameSettings.txt

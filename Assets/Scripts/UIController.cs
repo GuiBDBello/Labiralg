@@ -17,20 +17,6 @@ public class UIController : MonoBehaviour
         Application.Quit();
     }
 
-    public void OnButtonPostToLeaderboard()
-    {
-        long scoreToPost;
-
-        if (long.TryParse(score, out scoreToPost))
-        {
-            GPGS.PostToLeaderboard(scoreToPost);
-        }
-        else
-        {
-            Debug.Log("Error: Could not post score to leaderboard.Please enter a valid score value.");
-        }
-    }
-
     public void OnButtonShowLeaderboard()
     {
         Debug.Log("Showing Leaderboard");

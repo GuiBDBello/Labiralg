@@ -10,15 +10,10 @@ using UnityEngine.UI;
 
 public class GPGS : MonoBehaviour
 {
-    public static bool isAuthenticated = false;
-
     // Start is called before the first frame update
     void Start()
     {
-        if (!isAuthenticated)
-        {
-            AuthenticateUser();
-        }
+        AuthenticateUser();
     }
 
     private static void AuthenticateUser()
@@ -30,12 +25,10 @@ public class GPGS : MonoBehaviour
         {
             if (success == true)
             {
-                isAuthenticated = true;
                 Debug.Log("Logged in to Google Play Services");
             }
             else
             {
-                isAuthenticated = false;
                 Debug.LogError("Unable to sign in to Google Play Games Services");
             }
         });
@@ -43,12 +36,9 @@ public class GPGS : MonoBehaviour
 
     public static void PostToLeaderboard(long newScore)
     {
-        if (!isAuthenticated)
-        {
-            AuthenticateUser();
-        }
+        AuthenticateUser();
 
-        Social.ReportScore(newScore, GPGSIds.leaderboard_high_score, (bool success) =>
+        Social.ReportScore(newScore, GPGSIds.leaderboard_maior_pontuacao, (bool success) =>
         {
             if (success)
             {
@@ -63,14 +53,7 @@ public class GPGS : MonoBehaviour
 
     public static void ShowLeaderboardUI()
     {
-        if (!isAuthenticated)
-        {
-            AuthenticateUser();
-        }
-        else
-        {
-            PlayGamesPlatform.Instance.ShowLeaderboardUI(GPGSIds.leaderboard_high_score);
-        }
-        
+        AuthenticateUser();
+        PlayGamesPlatform.Instance.ShowLeaderboardUI();//GPGSIds.leaderboard_maior_pontuacao);
     }
 }
