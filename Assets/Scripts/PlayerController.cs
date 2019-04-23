@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public Text timeText;
     public Text dashText;
     public GameObject endGamePanel;
+    public GameObject pausePanel;
     public Maze maze;
     public Zoom zoom;
     public Joystick joystick;
@@ -54,7 +55,7 @@ public class PlayerController : MonoBehaviour
         timeSurvived = 0;
         pickUpsCollected = 0;
         isPlayable = true;
-}
+    }
 
     // Método chamado no primeiro frame que o script é ativo
     private void Start ()
@@ -94,6 +95,18 @@ public class PlayerController : MonoBehaviour
             Dash();
             //Jump();
         }
+    }
+
+    public void ButtonPausePressed()
+    {
+        isPlayable = false;
+        pausePanel.SetActive(true);
+    }
+
+    public void ButtonReturnPressed()
+    {
+        isPlayable = true;
+        pausePanel.SetActive(false);
     }
 
     // Chamado quando ocorre uma colisão no objeto que esse script é atribuído
@@ -177,7 +190,7 @@ public class PlayerController : MonoBehaviour
     {
         scoreText.text = "Pontuação: " + score;
         timeText.text = "Tempo: " + Math.Round(cronometer, 2);
-        dashText.text = "Investida: " + dashQuantity;
+        dashText.text = dashQuantity.ToString();
         timeSurvived += Time.deltaTime;
     }
 
@@ -185,10 +198,11 @@ public class PlayerController : MonoBehaviour
     {
         cronometer -= Time.deltaTime;
     }
+
     private void TimesUp()
     {
-        isPlayable = false;
         cronometer = 0.0f;
+        isPlayable = false;
         endGamePanel.SetActive(true);
         uiEndGameMenu.textTime.text = "Você sobreviveu por " + Math.Round(timeSurvived, 2) + "s";
         uiEndGameMenu.textItems.text = "Itens coletados: " + pickUpsCollected;
