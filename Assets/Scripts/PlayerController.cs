@@ -118,13 +118,16 @@ public class PlayerController : MonoBehaviour
             dashQuantity += 10;
             pickUpsCollected ++;
             score += pickupScore;
+            GameObject.FindWithTag(Tags.UIGameHUD).GetComponent<UIGameHUD>().ShowText("+"+pickupScore);
         }
         if (other.gameObject.CompareTag(Tags.Portal))
         {
-            cronometer += ((maze.xSize + maze.zSize) / 4);
+            float timeGained = ((maze.xSize + maze.zSize) / 4);
+            cronometer += timeGained;
             score += ((long) (portalScore)) + (maze.xSize * maze.zSize);
             isPlayable = false;
             zoom.ChangeZoom();
+            GameObject.FindWithTag(Tags.UIGameHUD).GetComponent<UIGameHUD>().ShowText("+"+timeGained);
         }
         //Destroy(other.gameObject);
     }

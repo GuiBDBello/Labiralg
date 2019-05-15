@@ -1,15 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-using UnityEngine.UI;
-
 public class UIController : MonoBehaviour
 {
     string score;
 
     public void ButtonSurvivalPressed ()
     {
-        SceneManager.LoadScene(Scenes.SceneSurvival);
+        SceneManager.LoadScene(Scenes.Survival);
     }
 
     public void ButtonQuitPressed ()
