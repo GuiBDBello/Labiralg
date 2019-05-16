@@ -8,18 +8,14 @@ public class PlayerController : MonoBehaviour
     public float speed;
     public float jumpForce;
     public float jumpDelay;
-    public float cronometer;
-    public Text scoreText;
-    public Text timeText;
-    public Text dashText;
-    public GameObject endGamePanel;
-    public GameObject pausePanel;
+    public bool isPlayable;
+    public int dashQuantity;
+    public float dashForce;
     public Maze maze;
     public Zoom zoom;
+    public UIGameHUD uiGameHUD;
     public Joystick joystick;
     public Joybutton joybutton;
-    public UIEndGameMenu uiEndGameMenu;
-    public bool isPlayable;
     
     private Vector3 movement;
     private Vector3 jump;
@@ -29,14 +25,6 @@ public class PlayerController : MonoBehaviour
     private float initialSpeed;
     private float moveHorizontal;
     private float moveVertical;
-    private int dashQuantity;
-    private float dashForce;
-    private long score;
-    private long levelScore;
-    private long pickupScore;
-    private long portalScore;
-    private float timeSurvived;
-    private int pickUpsCollected;
 
     // Inicia os valores das propriedades
     private void Init ()
@@ -46,15 +34,9 @@ public class PlayerController : MonoBehaviour
         initialMass = rb.mass;
         initialDrag = rb.drag;
         initialSpeed = speed;
+        isPlayable = true;
         dashQuantity = 0;
         dashForce = 20f;
-        score = 0;
-        levelScore = maze.xSize * maze.zSize;
-        pickupScore = 50;
-        portalScore = 100;
-        timeSurvived = 0;
-        pickUpsCollected = 0;
-        isPlayable = true;
     }
 
     // Método chamado no primeiro frame que o script é ativo
@@ -74,15 +56,7 @@ public class PlayerController : MonoBehaviour
 
         if (isPlayable)
         {
-            if (cronometer > 0.0f)
-            {
-                Countdown();
-                UpdateHUD();
-            }
-            else
-            {
-                TimesUp();
-            }
+            uiGameHUD.UpdateCronometer();
         }
     }
 
@@ -97,37 +71,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void ButtonPausePressed()
-    {
-        isPlayable = false;
-        pausePanel.SetActive(true);
-    }
-
-    public void ButtonReturnPressed()
-    {
-        isPlayable = true;
-        pausePanel.SetActive(false);
-    }
-
     // Chamado quando ocorre uma colisão no objeto que esse script é atribuído
     private void OnTriggerEnter (Collider other)
     {
         if (other.gameObject.CompareTag(Tags.PickUp))
         {
             other.gameObject.SetActive(false);
-            dashQuantity += 10;
-            pickUpsCollected ++;
-            score += pickupScore;
-            GameObject.FindWithTag(Tags.UIGameHUD).GetComponent<UIGameHUD>().ShowText("+"+pickupScore);
+            uiGameHUD.PickUpCollected();
         }
         if (other.gameObject.CompareTag(Tags.Portal))
         {
-            float timeGained = ((maze.xSize + maze.zSize) / 4);
-            cronometer += timeGained;
-            score += ((long) (portalScore)) + (maze.xSize * maze.zSize);
-            isPlayable = false;
-            zoom.ChangeZoom();
-            GameObject.FindWithTag(Tags.UIGameHUD).GetComponent<UIGameHUD>().ShowText("+"+timeGained);
+            float timeGained = (maze.xSize + maze.zSize) / 4f;
+            uiGameHUD.PortalReached(timeGained);
         }
         //Destroy(other.gameObject);
     }
@@ -187,31 +142,5 @@ public class PlayerController : MonoBehaviour
             */
         }
         jumpDelay -= Time.deltaTime;
-    }
-
-    private void UpdateHUD ()
-    {
-        scoreText.text = "Pontuação: " + score;
-        timeText.text = "Tempo: " + Math.Round(cronometer, 2);
-        dashText.text = dashQuantity.ToString();
-        timeSurvived += Time.deltaTime;
-    }
-
-    private void Countdown()
-    {
-        cronometer -= Time.deltaTime;
-    }
-
-    private void TimesUp()
-    {
-        cronometer = 0.0f;
-        isPlayable = false;
-        endGamePanel.SetActive(true);
-        uiEndGameMenu.textTime.text = "Você sobreviveu por " + Math.Round(timeSurvived, 2) + "s";
-        uiEndGameMenu.textItems.text = "Itens coletados: " + pickUpsCollected;
-        uiEndGameMenu.textMazes.text = "Labirintos concluídos: " + (maze.xSize - 5);
-        uiEndGameMenu.textTotalScore.text = "Pontuação total: " + score;
-
-        GPGS.PostToLeaderboard(score);
     }
 }

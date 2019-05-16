@@ -143,7 +143,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1322708745}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -222,7 +222,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1322708745}
-  m_RootOrder: 3
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -978,18 +978,14 @@ MonoBehaviour:
   speed: 100
   jumpForce: 1000
   jumpDelay: 1
-  cronometer: 30
-  scoreText: {fileID: 120072912}
-  timeText: {fileID: 106746330}
-  dashText: {fileID: 1291556772}
-  endGamePanel: {fileID: 1013711807}
-  pausePanel: {fileID: 955694092}
+  isPlayable: 0
+  dashQuantity: 0
+  dashForce: 0
   maze: {fileID: 1285419977}
   zoom: {fileID: 534669908}
+  uiGameHUD: {fileID: 1322708746}
   joystick: {fileID: 123062704}
   joybutton: {fileID: 1072777263}
-  uiEndGameMenu: {fileID: 1013711811}
-  isPlayable: 0
 --- !u!54 &557190900
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1826,7 +1822,7 @@ RectTransform:
   m_Children:
   - {fileID: 1291556771}
   m_Father: {fileID: 1322708745}
-  m_RootOrder: 1
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
@@ -2187,11 +2183,11 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
-  - {fileID: 2112983541}
-  - {fileID: 1072777260}
-  - {fileID: 1933509858}
   - {fileID: 120072911}
   - {fileID: 106746329}
+  - {fileID: 1933509858}
+  - {fileID: 2112983541}
+  - {fileID: 1072777260}
   - {fileID: 955694093}
   - {fileID: 1013711808}
   m_Father: {fileID: 0}
@@ -2214,6 +2210,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57675166f60a04348a63deeb6c620032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cronometer: 30
+  playerController: {fileID: 557190899}
+  pausePanel: {fileID: 955694092}
+  endGamePanel: {fileID: 1013711807}
+  scoreText: {fileID: 120072912}
+  timeText: {fileID: 106746330}
+  dashText: {fileID: 1291556772}
   popUp: {fileID: 6560440924556888253, guid: 2bed74b0a013f4743bab586481fdfd43, type: 3}
 --- !u!1 &1373514796
 GameObject:
@@ -2293,7 +2296,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 557190899}
+      - m_Target: {fileID: 1322708746}
         m_MethodName: ButtonReturnPressed
         m_Mode: 1
         m_Arguments:
@@ -2676,7 +2679,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 557190899}
+      - m_Target: {fileID: 1322708746}
         m_MethodName: ButtonPausePressed
         m_Mode: 1
         m_Arguments:
@@ -2776,7 +2779,7 @@ PrefabInstance:
     - target: {fileID: 3881087803549984436, guid: ec536a7718376554185e4a856d5ae230,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3881087803549984436, guid: ec536a7718376554185e4a856d5ae230,
         type: 3}

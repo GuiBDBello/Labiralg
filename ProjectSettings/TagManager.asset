@@ -7,6 +7,7 @@ TagManager:
   - Pick Up
   - Portal
   - HUD
+  - Pop Up
   layers:
   - Default
   - TransparentFX
