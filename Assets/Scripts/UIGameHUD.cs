@@ -64,19 +64,23 @@ public class UIGameHUD : MonoBehaviour
 
     public void PickUpCollected()
     {
-        playerController.dashQuantity += 10;
+        int dashAdded = 10;
+        playerController.dashQuantity += dashAdded;
         pickUpsCollected++;
         score += pickupScore;
-        ShowText(1f, "+" + pickupScore, scoreText.transform);
+        ShowText(1f, "+ " + pickupScore, scoreText.transform);
+        ShowText(1f, "+ " + dashAdded, dashText.transform);
     }
 
     public void PortalReached(float timeGained)
     {
+        long scoreAdded = ((long)(portalScore)) + (playerController.maze.xSize * playerController.maze.zSize);
         cronometer += timeGained;
-        score += ((long)(portalScore)) + (playerController.maze.xSize * playerController.maze.zSize);
+        score += scoreAdded;
         playerController.isPlayable = false;
         playerController.zoom.ChangeZoom();
-        ShowText(0.8f, "+" + timeGained, timeText.transform);
+        ShowText(1f, "+ " + scoreAdded, scoreText.transform);
+        ShowText(1f, "+ " + timeGained+"s", timeText.transform);
     }
 
     public void UpdateCronometer()
@@ -141,7 +145,7 @@ public class UIGameHUD : MonoBehaviour
             
             yield return null;
         }
-        Destroy(text, 1);
+        Destroy(text.gameObject, time);
     }
 
     private void GoUpwards(Text text)
