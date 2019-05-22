@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour
     public UIGameHUD uiGameHUD;
     public Joystick joystick;
     public Joybutton joybutton;
+    public AudioClip playerDashSound;
+    public AudioClip pickUpCollectedSound;
+    public AudioClip reachPortalSound;
     
     private Vector3 movement;
     private Vector3 jump;
@@ -78,11 +81,13 @@ public class PlayerController : MonoBehaviour
         {
             other.gameObject.SetActive(false);
             uiGameHUD.PickUpCollected();
+            AudioController.audioSource.PlayOneShot(pickUpCollectedSound);
         }
         if (other.gameObject.CompareTag(Tags.Portal))
         {
             float timeGained = (maze.xSize + maze.zSize) / 4f;
             uiGameHUD.PortalReached(timeGained);
+            AudioController.audioSource.PlayOneShot(reachPortalSound);
         }
         //Destroy(other.gameObject);
     }
@@ -114,6 +119,7 @@ public class PlayerController : MonoBehaviour
                 rb.mass = initialMass * dashForce;
                 speed = speed / 1.5f;
                 dashQuantity--;
+                AudioController.audioSource.PlayOneShot(playerDashSound);
             }
         }
         else
