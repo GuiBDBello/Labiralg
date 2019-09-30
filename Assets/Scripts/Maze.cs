@@ -45,6 +45,34 @@ public class Maze : MonoBehaviour
     private bool StartedBuilding { get; set; }
     private Coroutine SpawnPickUp { get; set; }
 
+    // Start é chamado antes do primeiro frame
+    private void Start ()
+    {
+        // Inicializa variáveis e propriedades
+        Init();
+
+        CreateWalls();
+        CreateCells();
+
+        if (generateInstantly)
+        {
+            InstantlyCreateMaze();
+        }
+        else
+        {
+            SlowlyCreateMaze();
+        }
+
+        // Cria uma co-rotina para "Spawnar" os 'Pick Ups' pelo Labirinto
+        if (SpawnPickUp != null)
+        {
+            StopCoroutine(SpawnPickUp);
+        }
+        SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
+
+        SpawnPortals();
+    }
+
     private void Init()
     {
         //Destroy(WallHolder);
@@ -74,34 +102,6 @@ public class Maze : MonoBehaviour
         PortalHolder.name = "Portals";
 
         zoom = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Zoom>();
-    }
-
-    // Start é chamado antes do primeiro frame
-    private void Start ()
-    {
-        // Inicializa variáveis e propriedades
-        Init();
-
-        CreateWalls();
-        CreateCells();
-
-        if (generateInstantly)
-        {
-            InstantlyCreateMaze();
-        }
-        else
-        {
-            SlowlyCreateMaze();
-        }
-
-        // Cria uma co-rotina para "Spawnar" os 'Pick Ups' pelo Labirinto
-        if (SpawnPickUp != null)
-        {
-            StopCoroutine(SpawnPickUp);
-        }
-        SpawnPickUp = StartCoroutine(SpawnPickUpInGameArea(pickUpSpawnTime));
-
-        SpawnPortals();
     }
 
     private Vector3 GetMazePositionRandom ()
@@ -447,11 +447,7 @@ public class Maze : MonoBehaviour
         zSize++;
 
         zoom.ChangeZoom();
-
-        //GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().
-
         StartCoroutine(RecreateMaze(0.1f));
-
         zoom.ChangeZoom();
     }
 }

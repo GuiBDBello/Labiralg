@@ -15,7 +15,8 @@ public class PlayerController : MonoBehaviour
     public Zoom zoom;
     public UIGameHUD uiGameHUD;
     public Joystick joystick;
-    public Joybutton joybutton;
+    public Joybutton dashJoybutton;
+    public Joybutton minimapJoybutton;
     public AudioClip playerDashSound;
     public AudioClip pickUpCollectedSound;
     public AudioClip reachPortalSound;
@@ -111,7 +112,7 @@ public class PlayerController : MonoBehaviour
         // Realiza um "dash" na direção pressionada,
         // enquanto aumenta a massa e diminui a velocidade,
         // deixando o Player mais lento com o passar do tempo
-        if (joybutton.Pressed)
+        if (dashJoybutton.Pressed)
         {
             if (dashQuantity > 0)
             {
@@ -148,5 +149,13 @@ public class PlayerController : MonoBehaviour
             */
         }
         jumpDelay -= Time.deltaTime;
+    }
+
+    private void ShowMinimap()
+    {
+        if (minimapJoybutton.Pressed)
+        {
+            
+        }
     }
 }
