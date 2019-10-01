@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip playerDashSound;
     public AudioClip pickUpCollectedSound;
     public AudioClip reachPortalSound;
+    public Camera mainCamera;
     
     private Vector3 movement;
     private Vector3 jump;
@@ -58,7 +59,7 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (isPlayable)
+        if (uiGameHUD.cronometer > 0.0F)
         {
             uiGameHUD.UpdateCronometer();
         }
@@ -73,6 +74,7 @@ public class PlayerController : MonoBehaviour
             Dash();
             //Jump();
         }
+        ShowMinimap();
     }
 
     // Chamado quando ocorre uma colisão no objeto que esse script é atribuído
@@ -155,7 +157,15 @@ public class PlayerController : MonoBehaviour
     {
         if (minimapJoybutton.Pressed)
         {
-            
+            isPlayable = false;
+            mainCamera.GetComponent<CameraController>().enabled = false;
+            mainCamera.transform.SetPositionAndRotation(new Vector3(0F, 25F, 0F), Quaternion.Euler(90F, 0F, 0F));
+        }
+        else
+        {
+            isPlayable = true;
+            mainCamera.GetComponent<CameraController>().enabled = true;
+            mainCamera.transform.localRotation = Quaternion.Euler(45F, 0F, 0F);
         }
     }
 }
