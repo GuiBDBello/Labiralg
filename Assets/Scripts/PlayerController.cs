@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using System;
 
 public class PlayerController : MonoBehaviour
 {
@@ -30,9 +28,11 @@ public class PlayerController : MonoBehaviour
     private float initialSpeed;
     private float moveHorizontal;
     private float moveVertical;
+    private float transitionTime;
+    private float minimapCameraHeight;
 
-    // Inicia os valores das propriedades
-    private void Init ()
+    // Método chamado no primeiro frame que o script é ativo
+    private void Start ()
     {
         jump = new Vector3(0.0f, 1.0f, 0.0f);
         rb = GetComponent<Rigidbody>();
@@ -42,27 +42,20 @@ public class PlayerController : MonoBehaviour
         isPlayable = true;
         dashQuantity = 0;
         dashForce = 20f;
-    }
-
-    // Método chamado no primeiro frame que o script é ativo
-    private void Start ()
-    {
-        Init();
+        transitionTime = 0;
+        minimapCameraHeight = 35F;
     }
 
     // Método chamado antes de renderizar um frame
     private void Update ()
     {
-        // TODO: Debug only, must be removed before release;
+        // TODO: Apenas para Debug, deve ser removido antes do lançamento;
         if (Input.GetKeyDown(KeyCode.R))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (uiGameHUD.cronometer > 0.0F)
-        {
-            uiGameHUD.UpdateCronometer();
-        }
+        uiGameHUD.UpdateCronometer();
     }
 
     // Chamado antes de realizar cálculos de física
@@ -91,6 +84,7 @@ public class PlayerController : MonoBehaviour
             float timeGained = (maze.xSize + maze.zSize) / 4f;
             uiGameHUD.PortalReached(timeGained);
             AudioController.audioSource.PlayOneShot(reachPortalSound);
+            minimapCameraHeight += 6.5F;
         }
         //Destroy(other.gameObject);
     }
@@ -100,9 +94,6 @@ public class PlayerController : MonoBehaviour
     {
         moveHorizontal = Input.GetAxis("Horizontal") + joystick.Horizontal;
         moveVertical = Input.GetAxis("Vertical") + joystick.Vertical;
-
-        //Debug.Log(moveHorizontal);
-        //Debug.Log(moveVertical);
 
         movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
         rb.AddForce(movement * speed);
@@ -114,16 +105,13 @@ public class PlayerController : MonoBehaviour
         // Realiza um "dash" na direção pressionada,
         // enquanto aumenta a massa e diminui a velocidade,
         // deixando o Player mais lento com o passar do tempo
-        if (dashJoybutton.Pressed)
+        if (dashJoybutton.Pressed && dashQuantity > 0)
         {
-            if (dashQuantity > 0)
-            {
-                rb.AddForce(movement * speed * dashForce);
-                rb.mass = initialMass * dashForce;
-                speed = speed / 1.5f;
-                dashQuantity--;
-                AudioController.audioSource.PlayOneShot(playerDashSound);
-            }
+            rb.AddForce(movement * speed * dashForce);
+            rb.mass = initialMass * dashForce;
+            speed = speed / 1.5f;
+            dashQuantity--;
+            AudioController.audioSource.PlayOneShot(playerDashSound);
         }
         else
         {
@@ -155,17 +143,23 @@ public class PlayerController : MonoBehaviour
 
     private void ShowMinimap()
     {
+        //minimapCameraHeight = 35F + maze.xSize + 6.5F;
+        Debug.Log(minimapCameraHeight);
         if (minimapJoybutton.Pressed)
         {
             isPlayable = false;
+            transitionTime += Time.deltaTime / 1;
             mainCamera.GetComponent<CameraController>().enabled = false;
-            mainCamera.transform.SetPositionAndRotation(new Vector3(0F, 25F, 0F), Quaternion.Euler(90F, 0F, 0F));
+            mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, new Vector3(0F, minimapCameraHeight, 0F), transitionTime);
+            mainCamera.transform.localRotation = Quaternion.Lerp(mainCamera.transform.localRotation, Quaternion.Euler(90F, 0F, 0F), transitionTime);
         }
         else
         {
             isPlayable = true;
-            mainCamera.GetComponent<CameraController>().enabled = true;
+            transitionTime = 0;
+            mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, new Vector3(0F, 15.5F, -15F), transitionTime);
             mainCamera.transform.localRotation = Quaternion.Euler(45F, 0F, 0F);
+            mainCamera.GetComponent<CameraController>().enabled = true;
         }
     }
 }

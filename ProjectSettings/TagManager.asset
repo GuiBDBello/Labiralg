@@ -8,6 +8,7 @@ TagManager:
   - Portal
   - HUD
   - Pop Up
+  - Minimap
   layers:
   - Default
   - TransparentFX

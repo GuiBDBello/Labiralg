@@ -8,6 +8,7 @@ public class UIGameHUD : MonoBehaviour
 {
     public float cronometer;
     public PlayerController playerController;
+    public Maze maze;
     public GameObject pausePanel;
     public GameObject endGamePanel;
     public Text scoreText;
@@ -28,7 +29,7 @@ public class UIGameHUD : MonoBehaviour
     void Start()
     {
         score = 0;
-        levelScore = playerController.maze.xSize * playerController.maze.zSize;
+        levelScore = maze.xSize * maze.zSize;
         pickupScore = 50;
         portalScore = 100;
         timeSurvived = 0;
@@ -74,7 +75,7 @@ public class UIGameHUD : MonoBehaviour
 
     public void PortalReached(float timeGained)
     {
-        long scoreAdded = ((long)(portalScore)) + (playerController.maze.xSize * playerController.maze.zSize);
+        long scoreAdded = ((long)(portalScore)) + (maze.xSize * maze.zSize);
         cronometer += timeGained;
         score += scoreAdded;
         playerController.isPlayable = false;
@@ -100,12 +101,12 @@ public class UIGameHUD : MonoBehaviour
         scoreText.text = "Pontuação: " + score;
         timeText.text = "Tempo: " + Math.Round(cronometer, 2);
         dashText.text = playerController.dashQuantity.ToString();
-        timeSurvived += Time.deltaTime;
     }
 
     private void Countdown()
     {
         cronometer -= Time.deltaTime;
+        timeSurvived += Time.deltaTime;
     }
 
     private void TimesUp()
@@ -115,7 +116,7 @@ public class UIGameHUD : MonoBehaviour
         endGamePanel.SetActive(true);
         uiEndGameMenu.textTime.text = "Você sobreviveu por " + Math.Round(timeSurvived, 2) + "s";
         uiEndGameMenu.textItems.text = "Itens coletados: " + pickUpsCollected;
-        uiEndGameMenu.textMazes.text = "Labirintos concluídos: " + (playerController.maze.xSize - 5);
+        uiEndGameMenu.textMazes.text = "Labirintos concluídos: " + (maze.xSize - 5);
         uiEndGameMenu.textTotalScore.text = "Pontuação total: " + score;
 
         GPGS.PostToLeaderboard(score);
