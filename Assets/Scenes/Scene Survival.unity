@@ -1013,15 +1013,16 @@ MonoBehaviour:
   isPlayable: 1
   dashQuantity: 0
   dashForce: 0
-  maze: {fileID: 2916989988120865823, guid: bcf9aaeaf1695ba468b1aee5448d33da, type: 3}
+  maze: {fileID: 1774300651}
   zoom: {fileID: 534669908}
   uiGameHUD: {fileID: 1322708746}
   joystick: {fileID: 123062704}
   dashJoybutton: {fileID: 1072777263}
   minimapJoybutton: {fileID: 2028723230}
-  playerDashSound: {fileID: 0}
-  pickUpCollectedSound: {fileID: 0}
-  reachPortalSound: {fileID: 0}
+  playerDashSound: {fileID: 8300000, guid: d46323e22e74e46baa241cbf48c85671, type: 3}
+  pickUpCollectedSound: {fileID: 8300000, guid: d8d04c6f80a1140db85ede568dab1f51,
+    type: 3}
+  reachPortalSound: {fileID: 8300000, guid: 4e1ff8faed12a475eba9be0e46072269, type: 3}
   mainCamera: {fileID: 534669904}
 --- !u!54 &557190900
 Rigidbody:
@@ -1038,7 +1039,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!1 &625367578
 GameObject:
   m_ObjectHideFlags: 0
@@ -1768,10 +1769,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a262c9a9b5b35fd4c930afb01670c814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textTime: {fileID: 0}
-  textItems: {fileID: 0}
-  textMazes: {fileID: 0}
-  textTotalScore: {fileID: 0}
+  textTime: {fileID: 327533363}
+  textItems: {fileID: 710009483}
+  textMazes: {fileID: 496093755}
+  textTotalScore: {fileID: 1202984390}
 --- !u!1 &1046119723
 GameObject:
   m_ObjectHideFlags: 0
@@ -2312,6 +2313,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cronometer: 30
   playerController: {fileID: 557190899}
+  maze: {fileID: 1774300651}
   pausePanel: {fileID: 955694092}
   endGamePanel: {fileID: 1013711807}
   scoreText: {fileID: 120072912}
