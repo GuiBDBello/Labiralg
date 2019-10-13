@@ -124,14 +124,10 @@ public class UIGameHUD : MonoBehaviour
 
     IEnumerator FadeAway(float time, Text text, Transform lerpTo)
     {
-        float contador = Time.deltaTime / time;
         text = Instantiate(text, transform.position, Quaternion.identity);
-        //text.transform.position = new Vector3(hud.transform.position.x, hud.transform.position.y + 200, 0);
         text.gameObject.SetActive(true);
-        text.transform.parent = hud.gameObject.transform;
-
-        //Vector3 direction = lerpTo.position - transform.position;
-
+        text.transform.SetParent(hud.gameObject.transform);
+        
         textColor = text.color;
         textColor.a = 1;
 
@@ -141,7 +137,7 @@ public class UIGameHUD : MonoBehaviour
             GoUpwards(text);
             fading += Time.deltaTime / time;
             textColor.a = Mathf.Lerp(1, 0, fading);
-            text.transform.position = Vector3.Lerp(transform.position, lerpTo.position, fading);
+            text.transform.position = Vector3.Lerp(transform.position - new Vector3(popUp.rectTransform.rect.width / 2, 0, 0) + new Vector3(0, popUp.rectTransform.rect.height / 2, 0), lerpTo.position, fading);
             text.color = textColor;
             
             yield return null;

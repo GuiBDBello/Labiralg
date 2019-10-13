@@ -143,8 +143,6 @@ public class PlayerController : MonoBehaviour
 
     private void ShowMinimap()
     {
-        //minimapCameraHeight = 35F + maze.xSize + 6.5F;
-        Debug.Log(minimapCameraHeight);
         if (minimapJoybutton.Pressed)
         {
             isPlayable = false;
