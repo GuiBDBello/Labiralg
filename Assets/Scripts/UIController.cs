@@ -14,10 +14,4 @@ public class UIController : MonoBehaviour
     {
         Application.Quit();
     }
-
-    public void OnButtonShowLeaderboard()
-    {
-        Debug.Log("Showing Leaderboard");
-        GPGS.ShowLeaderboardUI();
-    }
 }

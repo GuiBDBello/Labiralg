@@ -118,8 +118,6 @@ public class UIGameHUD : MonoBehaviour
         uiEndGameMenu.textItems.text = "Itens coletados: " + pickUpsCollected;
         uiEndGameMenu.textMazes.text = "Labirintos concluídos: " + (maze.xSize - 5);
         uiEndGameMenu.textTotalScore.text = "Pontuação total: " + score;
-
-        GPGS.PostToLeaderboard(score);
     }
 
     IEnumerator FadeAway(float time, Text text, Transform lerpTo)
