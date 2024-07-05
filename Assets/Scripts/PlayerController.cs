@@ -105,7 +105,7 @@ public class PlayerController : MonoBehaviour
         // Realiza um "dash" na direção pressionada,
         // enquanto aumenta a massa e diminui a velocidade,
         // deixando o Player mais lento com o passar do tempo
-        if (dashJoybutton.Pressed && dashQuantity > 0)
+        if ((dashJoybutton.Pressed || Input.GetKey(KeyCode.Space)) && dashQuantity > 0)
         {
             rb.AddForce(movement * speed * dashForce);
             rb.mass = initialMass * dashForce;
@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour
 
     private void ShowMinimap()
     {
-        if (minimapJoybutton.Pressed)
+        if (minimapJoybutton.Pressed || Input.GetKey(KeyCode.M))
         {
             isPlayable = false;
             transitionTime += Time.deltaTime / 1;

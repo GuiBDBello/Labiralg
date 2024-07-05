@@ -25,6 +25,7 @@ public class UIGameHUD : MonoBehaviour
     private UIGameHUD hud;
     private UIEndGameMenu uiEndGameMenu;
     private Color textColor;
+    private bool isPaused;
 
     void Start()
     {
@@ -38,11 +39,25 @@ public class UIGameHUD : MonoBehaviour
         hud = GameObject.FindWithTag(Tags.UIGameHUD).GetComponent<UIGameHUD>();
         hud = gameObject.GetComponent<UIGameHUD>();
         uiEndGameMenu = endGamePanel.GetComponent<UIEndGameMenu>();
+
+        isPaused = false;
     }
 
     void Update()
     {
         UpdateHUD();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (playerController.isPlayable)
+            {
+                ButtonPausePressed();
+            }
+            else
+            {
+                ButtonReturnPressed();
+            }
+        }
     }
 
     public void ButtonPausePressed()
