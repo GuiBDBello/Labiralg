@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/GuiBDBello/Labiralg">
-    <img alt="project_name" title="project_name" src="images/logo.png" width="450">
+    <img alt="project_name" title="project_name" src="images/logo.gif" width="450">
   </a>
 </p>
 
